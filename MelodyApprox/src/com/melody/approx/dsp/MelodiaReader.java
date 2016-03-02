@@ -5,9 +5,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import com.melody.approx.pitch.FrequencyContour;
 import com.melody.approx.pitch.Melody;
 import com.melody.approx.pitch.Melody.MelodyException;
+import com.melody.approx.pitch.PitchContour;
+import com.melody.approx.pitch.PitchContour.ContourType;
 import com.melody.approx.pitch.PitchContour.PitchContourException;
 
 public abstract class MelodiaReader {
@@ -25,10 +26,10 @@ public abstract class MelodiaReader {
 	public abstract Melody getMelody(String filePath)
 			throws MelodiaReaderException, PitchContourException, MelodyException;
 
-	protected FrequencyContour readMelodia(String filePath, boolean convertNegative)
+	protected PitchContour readMelodia(String filePath, boolean convertNegative)
 			throws MelodiaReaderException, PitchContourException {
 		String line;
-		FrequencyContour contour = new FrequencyContour();
+		PitchContour contour = new PitchContour(ContourType.FREQUENCY);
 		FileReader fileReader;
 		BufferedReader bufferedReader = null;
 

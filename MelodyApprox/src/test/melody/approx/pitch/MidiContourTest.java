@@ -4,15 +4,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.melody.approx.pitch.MidiContour;
+import com.melody.approx.pitch.PitchContour;
+import com.melody.approx.pitch.PitchContour.ContourType;
 import com.melody.approx.pitch.PitchContour.PitchContourException;
 
 public class MidiContourTest {
-	MidiContour pc;
+	PitchContour pc;
 	
 	@Before
 	public void setUp() {
-		pc = new MidiContour();
+		pc = new PitchContour(ContourType.MIDI);
 	}
 
 	@After

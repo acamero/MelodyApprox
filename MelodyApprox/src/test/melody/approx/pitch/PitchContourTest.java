@@ -15,7 +15,7 @@ public class PitchContourTest {
 
 	@Before
 	public void setUp() {
-		pc = new PitchContourTestImpl();
+		pc = new PitchContour();
 	}
 
 	@After
@@ -68,16 +68,4 @@ public class PitchContourTest {
 		PitchContour.frequencyToMidi(0.0d);
 	}
 
-	
-	protected class PitchContourTestImpl extends PitchContour {
-
-		@Override
-		public void appendFrequency(double duration, double frequency) throws PitchContourException {
-		}
-
-		@Override
-		public void appendMidi(double duration, int midi) throws PitchContourException {
-		}
-
-	}
 }

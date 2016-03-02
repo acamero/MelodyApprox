@@ -15,7 +15,6 @@ import org.junit.Test;
 
 import com.melody.approx.dsp.MelodiaReader;
 import com.melody.approx.dsp.MelodiaReader.MelodiaReaderException;
-import com.melody.approx.pitch.FrequencyContour;
 import com.melody.approx.pitch.Melody;
 import com.melody.approx.pitch.Melody.MelodyException;
 import com.melody.approx.pitch.PitchContour;
@@ -26,8 +25,8 @@ public class MelodiaReaderTest {
 	private static final String incorrectSeparator = "separator.tmp";
 	private static final String incorrectNumber = "number.tmp";
 	private static final String incorrectOffset = "offset.tmp";
-	private static FrequencyContour correctNotConvert = new FrequencyContour();
-	private static FrequencyContour correctConvert = new FrequencyContour();
+	private static PitchContour correctNotConvert = new PitchContour();
+	private static PitchContour correctConvert = new PitchContour();
 	private MelodiaReaderTestImpl mReader;
 
 	@BeforeClass
@@ -162,14 +161,13 @@ public class MelodiaReaderTest {
 
 	protected static class MelodiaReaderTestImpl extends MelodiaReader {
 
-		public FrequencyContour readMelodiaTest(String filePath, boolean convertNegative)
+		public PitchContour readMelodiaTest(String filePath, boolean convertNegative)
 				throws MelodiaReaderException, PitchContourException {
 			return readMelodia(filePath, convertNegative);
 		}
 
 		@Override
-		public Melody getMelody(String filePath)
-				throws MelodiaReaderException, PitchContourException, MelodyException {
+		public Melody getMelody(String filePath) throws MelodiaReaderException, PitchContourException, MelodyException {
 			return null;
 		}
 

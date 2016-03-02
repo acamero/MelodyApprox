@@ -5,16 +5,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.melody.approx.pitch.FrequencyContour;
+import com.melody.approx.pitch.PitchContour;
+import com.melody.approx.pitch.PitchContour.ContourType;
 import com.melody.approx.pitch.PitchContour.PitchContourException;
 
 public class FrequencyContourTest {
 
-	FrequencyContour pc;
+	PitchContour pc;
 	
 	@Before
 	public void setUp() {
-		pc = new FrequencyContour();
+		pc = new PitchContour(ContourType.FREQUENCY);
 	}
 
 	@After

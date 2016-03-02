@@ -5,8 +5,6 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -16,7 +14,6 @@ import org.junit.Test;
 
 import com.melody.approx.dsp.MelodiaReader.MelodiaReaderException;
 import com.melody.approx.dsp.SilenceChopper;
-import com.melody.approx.pitch.FrequencyContour;
 import com.melody.approx.pitch.Melody;
 import com.melody.approx.pitch.Melody.MelodyException;
 import com.melody.approx.pitch.PitchContour;
@@ -64,14 +61,14 @@ public class SilenceChopperTest {
 		fw.write("0.8" + melodia.getSeparator() + "-110.0\n");
 		fw.close();
 		
-		FrequencyContour fc = new FrequencyContour();
+		PitchContour fc = new PitchContour();
 		fc.appendFrequency(0.0d, 440.0d);
 		fc.appendFrequency(0.1d, 440.0d);
 		fc.appendFrequency(0.2d, 220.0d);
 		fc.appendFrequency(0.3d, 220.0d);
 		melody.addPhrase(0.1d, fc);
 		
-		fc = new FrequencyContour();
+		fc = new PitchContour();
 		fc.appendFrequency(0.0d, 110.0d);
 		melody.addPhrase(0.7d, fc);
 	}
