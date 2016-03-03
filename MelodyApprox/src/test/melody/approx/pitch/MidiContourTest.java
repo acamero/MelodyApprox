@@ -8,6 +8,11 @@ import com.melody.approx.pitch.PitchContour;
 import com.melody.approx.pitch.PitchContour.ContourType;
 import com.melody.approx.pitch.PitchContour.PitchContourException;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class MidiContourTest {
 	PitchContour pc;
 	
@@ -29,11 +34,6 @@ public class MidiContourTest {
 	@Test(expected = PitchContourException.class)
 	public void zeroMidi() throws PitchContourException {
 		pc.appendMidi(1.0d, 0);
-	}
-	
-	@Test(expected = PitchContourException.class)
-	public void zeroDurationMidi() throws PitchContourException {
-		pc.appendMidi(0.0d, 69);
 	}
 	
 	@Test(expected = PitchContourException.class)

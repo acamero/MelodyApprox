@@ -3,16 +3,21 @@ package com.melody.approx.dsp;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import com.melody.approx.pitch.Melody;
 import com.melody.approx.pitch.Melody.MelodyException;
 import com.melody.approx.pitch.PitchContour;
 import com.melody.approx.pitch.PitchContour.ContourType;
 import com.melody.approx.pitch.PitchContour.PitchContourException;
+import com.melody.approx.util.Log;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public abstract class MelodiaReader {
-	private static final Logger LOGGER = Logger.getLogger(MelodiaReader.class.getName());
+
 	private String separator = ",";
 
 	public String getSeparator() {
@@ -47,10 +52,10 @@ public abstract class MelodiaReader {
 
 				if (freq > 0.0d) {
 					contour.appendFrequency(time, freq);
-					LOGGER.info("Read from 'melodia' (t=" + time + ", f=" + freq + ")");
+					Log.info("Read from 'melodia' (t=" + time + ", f=" + freq + ")");
 				} else {
 					contour.appendSilence(time);
-					LOGGER.info("Read from 'melodia' (t=" + time + ", silence)");
+					Log.info("Read from 'melodia' (t=" + time + ", silence)");
 				}
 
 			}

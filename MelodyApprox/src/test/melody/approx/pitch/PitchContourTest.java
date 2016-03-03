@@ -9,6 +9,11 @@ import org.junit.Test;
 import com.melody.approx.pitch.PitchContour;
 import com.melody.approx.pitch.PitchContour.PitchContourException;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class PitchContourTest {
 
 	PitchContour pc;

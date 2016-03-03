@@ -1,10 +1,16 @@
 package com.melody.approx.pitch;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Melody {
-
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
+public class Melody implements Serializable {
+	private static final long serialVersionUID = 8417284023258188547L;
 	private Map<Double,PitchContour> phrases = new HashMap<Double,PitchContour>();
 	
 	public void addPhrase(double offset, PitchContour contour) throws MelodyException {

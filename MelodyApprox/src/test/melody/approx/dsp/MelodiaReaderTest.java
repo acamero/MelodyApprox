@@ -20,6 +20,11 @@ import com.melody.approx.pitch.Melody.MelodyException;
 import com.melody.approx.pitch.PitchContour;
 import com.melody.approx.pitch.PitchContour.PitchContourException;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class MelodiaReaderTest {
 	private static final String correct = "correct.tmp";
 	private static final String incorrectSeparator = "separator.tmp";

@@ -1,10 +1,17 @@
 package com.melody.approx.pitch;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class PitchContour {
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
+public class PitchContour implements Serializable {
+	private static final long serialVersionUID = 6402589828106509018L;
 	private static final double LOG2 = 0.6931472d;
 	private static final double SILENCE = 0.0d;
 	private ContourType contourType = ContourType.FREQUENCY;
