@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.melody.approx.pitch.PitchContour;
+import com.melody.approx.pitch.PitchContour.ContourType;
 import com.melody.approx.pitch.PitchContour.PitchContourException;
 
 /**
@@ -20,7 +21,7 @@ public class PitchContourTest {
 
 	@Before
 	public void setUp() {
-		pc = new PitchContour();
+		
 	}
 
 	@After
@@ -30,6 +31,7 @@ public class PitchContourTest {
 
 	@Test(expected = PitchContourException.class)
 	public void zeroDurationSilence() throws PitchContourException {
+		pc = new PitchContour();
 		pc.appendSilence(0.0d);
 	}
 
@@ -71,6 +73,17 @@ public class PitchContourTest {
 	@Test(expected = PitchContourException.class)
 	public void zeroFreqToMidi() throws PitchContourException {
 		PitchContour.frequencyToMidi(0.0d);
+	}
+	
+	@Test
+	public void contourToString() throws PitchContourException {
+		pc = new PitchContour(ContourType.FREQUENCY);
+		pc.appendFrequency(0.0d, 440.0d);
+		pc.appendFrequency(0.1d, 440.0d);
+		String expected = "Contour type: "+ContourType.FREQUENCY.toString()+"\n";
+		expected += "Offset: "+Double.toString(0.0d)+" Pitch: "+Double.toString(440.0d)+"\n";
+		expected += "Offset: "+Double.toString(.1d)+" Pitch: "+Double.toString(440.0d)+"\n";
+		assertEquals(expected,pc.toString());
 	}
 
 }

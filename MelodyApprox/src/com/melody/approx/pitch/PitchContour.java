@@ -1,6 +1,7 @@
 package com.melody.approx.pitch;
 
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -72,6 +73,21 @@ public class PitchContour implements Serializable {
 
 	public ContourType getContourType() {
 		return contourType;
+	}
+	
+	public String toString() {
+		StringWriter sw = new StringWriter();
+		sw.write("Contour type: ");
+		sw.write(contourType.toString());
+		sw.write("\n");
+		for(Entry<Double, Double> e : contour.entrySet()) {
+			sw.write("Offset: ");
+			sw.write(e.getKey().toString());
+			sw.write(" Pitch: ");
+			sw.write(e.getValue().toString());
+			sw.write("\n");
+		}
+		return sw.toString();
 	}
 
 	public static double getSilence() {
