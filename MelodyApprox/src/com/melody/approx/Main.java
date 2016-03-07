@@ -1,13 +1,6 @@
 package com.melody.approx;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Arrays;
 
 import org.apache.commons.cli.CommandLine;
@@ -27,6 +20,7 @@ import com.melody.approx.pitch.PitchContour.ContourType;
 import com.melody.approx.pitch.PitchContour.PitchContourException;
 import com.melody.approx.util.Log;
 import com.melody.approx.util.Log.LogLevel;
+import com.melody.approx.util.Utils;
 
 /**
  * 
@@ -35,7 +29,7 @@ import com.melody.approx.util.Log.LogLevel;
  */
 public class Main {
 
-	private static final String PROGRAM_NAME = "melody";
+	private static final String PROGRAM_NAME = "java -jar melody.jar";
 
 	private static enum ParseMelodia {
 		DEFAULT, SILENCE_CHOPPER
@@ -58,20 +52,7 @@ public class Main {
 			melody = Melody.transform(melody, ContourType.MIDI);
 		}
 		return melody;
-	}
-
-	public static void serialize(Object obj, String filePath) {
-		try {
-			FileOutputStream fileOut = new FileOutputStream(filePath);
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(obj);
-			out.close();
-			fileOut.close();
-			Log.info("Serialized data is saved in " + filePath);
-		} catch (IOException e) {
-			exceptionToLog(e);
-		}
-	}
+	}	
 	
 	public static String getFileName(String originalFilePath, String newExtension) {
 		String filePath;
@@ -89,26 +70,7 @@ public class Main {
 		return filePath;
 	}
 
-	public static Object deserialize(String filePath) throws IOException, ClassNotFoundException {
-		Object obj = null;
-
-		FileInputStream fileIn = new FileInputStream(filePath);
-		ObjectInputStream in = new ObjectInputStream(fileIn);
-		obj = in.readObject();
-		in.close();
-		fileIn.close();
-
-		return obj;
-	}
-
-	private static void exceptionToLog(Exception e) {
-		Log.error(e.getMessage());
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		e.printStackTrace(pw);
-		Log.error(sw.toString());
-	}
-
+	
 	private static Options setOptions() {
 		// create the Options
 		Options options = new Options();
@@ -208,7 +170,7 @@ public class Main {
 			try {
 				melody = parseMelodia(parseMelodia, filePath, isMidi);
 			} catch (MelodiaReaderException | PitchContourException | MelodyException e) {
-				exceptionToLog(e);
+				Utils.exceptionToLog(e);
 				// quit program
 				return;
 			}
@@ -226,7 +188,7 @@ public class Main {
 					}
 				}
 				String serFilePath = outDirectory  + getFileName(filePath, "ser");
-				serialize(melody, serFilePath);
+				Utils.serialize(melody, serFilePath);
 			}
 		}
 
