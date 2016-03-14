@@ -12,26 +12,20 @@ public class Chromosome {
 			this.numberOfGenes=numberOfGenes;
 			// initialize the list as a fixed list
 			genes = Arrays.asList(new Double[this.numberOfGenes]);
+			for(int i=0;i<numberOfGenes;i++) {
+				genes.set(i, new Double(0.0d));
+			}
 		} else {
 			throw new ChromosomeException("The number of genes should be greater than zero");
 		}
 	}
 	
-	public Chromosome(int numberOfGenes, ChromosomeInitInterface init) throws ChromosomeException {
-		if (numberOfGenes > 0 && init!=null) {
-			this.numberOfGenes=numberOfGenes;
-			// initialize the list as a fixed list
-			genes = Arrays.asList(new Double[this.numberOfGenes]);
-			// TODO initialize chromosome using init
-		} else if (numberOfGenes <= 0) {
-			throw new ChromosomeException("The number of genes should be greater than zero");
-		} else {
-			throw new ChromosomeException("You should define an init function for the chromsomes");
-		}
-	}
-
 	public int getNumberOfGenes() {		
 		return numberOfGenes;
+	}
+	
+	public double getGene(int geneNumber) {
+		return genes.get(geneNumber);
 	}
 	
 	public String toString() {

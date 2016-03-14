@@ -19,15 +19,17 @@ public class ChromosomeTest {
 	}
 	
 	@Test(expected = ChromosomeException.class)
-	public void withInitNull() throws ChromosomeException {
-		int size = 10;
-		chromosome = new Chromosome(size,null);
-	}
-	
-	@Test(expected = ChromosomeException.class)
 	public void negativeGenes() throws ChromosomeException {
 		int size = -110;
 		chromosome = new Chromosome(size);
+	}
+	
+	@Test
+	public void create() throws ChromosomeException {
+		chromosome = new Chromosome(2);
+		for(int i= 0;i<chromosome.getNumberOfGenes();i++) {
+			assertEquals(0.0d, chromosome.getGene(i),0.0d);
+		}
 	}
 
 }

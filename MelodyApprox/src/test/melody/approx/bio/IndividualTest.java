@@ -22,12 +22,6 @@ public class IndividualTest {
 		assertEquals(size,ind.getNumberOfGenes());
 	}
 	
-	@Test(expected=ChromosomeException.class)
-	public void withInitNull() throws ChromosomeException {
-		int size = 10;
-		ind = new Individual(size,null);		
-	}
-
 	@Test
 	public void compareG() throws ChromosomeException {
 		int size = 10;

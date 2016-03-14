@@ -11,10 +11,6 @@ public class Individual implements Comparable<Individual> {
 		chromosome = new Chromosome(numberOfGenes);
 	}
 
-	public Individual(int numberOfGenes, ChromosomeInitInterface init) throws ChromosomeException {
-		chromosome = new Chromosome(numberOfGenes, init);
-	}
-
 	public double getFitness() {
 		return fitness;
 	}

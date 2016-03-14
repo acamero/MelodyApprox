@@ -5,36 +5,55 @@ import java.util.Collections;
 import java.util.List;
 
 import com.melody.approx.bio.Chromosome.ChromosomeException;
+import com.melody.approx.bio.IndividualInitInterface.IndividualInitInterfaceException;
+import com.melody.approx.bio.Problem.ProblemException;
+import com.melody.approx.util.Log;
 
 public class Population {
 
 	private int populationSize;
 	private List<Individual> population;
+	private Individual[] popArray; 
 	private double bestFitnessEver;
 	private double bestFitness;
 	private double worstFitness;
 	private double avgFitness;
 	private int bestPosition;
 	private int worstPosition;
+	private int numberOfEvaluations;
 
-	public Population(int populationSize, int numberOfGenes, ChromosomeInitInterface init)
-			throws PopulationException, ChromosomeException {
+	public Population(int populationSize, int numberOfGenes, IndividualInitInterface init)
+			throws PopulationException, ChromosomeException, IndividualInitInterfaceException, ProblemException {
 		if (populationSize > 0) {
 			this.populationSize = populationSize;
 			// set population list as a fixed size list
-			population = Arrays.asList(new Individual[this.populationSize]);
+			if (numberOfGenes > 0) {
+				popArray = new Individual[this.populationSize];
+				population = Arrays.asList(popArray);
+			} else {
+				throw new PopulationException("The number of genes should be greater than zero");
+			}
 		} else {
 			throw new PopulationException("Population size should be greater than zero");
 		}
 
-		initPopulation(numberOfGenes, init);
+		if (init == null) {
+			throw new PopulationException("IndividualInitInterface should not be null");
+		} else {
+			initPopulation(numberOfGenes, init);
+		}
 		bestFitnessEver = Double.MAX_VALUE;
 	}
-	
-	private void initPopulation(int numberOfGenes, ChromosomeInitInterface init) throws ChromosomeException {
-		for(int i=0;i<populationSize;i++) {
-			population.set(i, new Individual(numberOfGenes, init));
+
+	private void initPopulation(int numberOfGenes, IndividualInitInterface init)
+			throws ChromosomeException, IndividualInitInterfaceException, ProblemException {
+		numberOfEvaluations = 0;
+		for (int i = 0; i < populationSize; i++) {
+			// the individuals are initialized with a fitness value
+			population.set(i, init.nextIndividual());
+			numberOfEvaluations++;
 		}
+		computeStats();
 	}
 
 	public int getPopulationSize() {
@@ -77,12 +96,12 @@ public class Population {
 				bestFitness = population.get(i).getFitness();
 				bestPosition = i;
 			}
-			
+
 			if (population.get(i).getFitness() > worstFitness) {
 				worstFitness = population.get(i).getFitness();
 				worstPosition = i;
 			}
-			
+
 			if (population.get(i).getFitness() < bestFitnessEver) {
 				bestFitnessEver = population.get(i).getFitness();
 			}
@@ -90,6 +109,10 @@ public class Population {
 		}
 
 		avgFitness = total / (double) populationSize;
+	}
+
+	public int getNumberOfEvaluations() {
+		return numberOfEvaluations;
 	}
 
 	/**
@@ -105,20 +128,33 @@ public class Population {
 			throw new PopulationException("The number of offsprings should be grater than zero");
 		} else if (offsprings.size() == 1) {
 			// steady state
+			Log.info("Worst individual replaced");
 			population.set(worstPosition, offsprings.get(0));
 		} else if (offsprings.size() == populationSize - 1) {
 			// elite
 			offsprings.add(population.get(bestPosition));
-			population = Arrays.asList((Individual[]) offsprings.toArray());
+			Log.info("Best individual added to the offsprings population");
+			offsprings.toArray(popArray);
+			population = Arrays.asList(popArray);
 		} else if (offsprings.size() > populationSize) {
 			throw new PopulationException("The number of offsprings shoul not be greater than the population size");
+		} else if (offsprings.size() == populationSize) {
+			Log.info("All population replaced");
+			offsprings.toArray(popArray);
+			population = Arrays.asList(popArray);
 		} else {
 			// replace the 'n' worst individuals
 			Collections.sort(population);
-			for (int i = populationSize - offsprings.size(); i < populationSize; i++) {
-				population.set(i, offsprings.get(i - offsprings.size()));
+			int n = populationSize - offsprings.size();
+			for (int i = n; i < populationSize; i++) {				
+				population.set(i, offsprings.get(i - n));
 			}
+			Log.info("Replace "+n+" individuals");			
 		}
+	}
+	
+	public List<Individual> getPopulation() {
+		return population;
 	}
 
 	public class PopulationException extends Exception {
