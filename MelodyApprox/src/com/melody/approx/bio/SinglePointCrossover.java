@@ -25,9 +25,18 @@ public class SinglePointCrossover implements CrossoverInterface {
 
 			if (pos > a.getNumberOfGenes() - 1)
 				pos = a.getNumberOfGenes() - 1;
-
-			// If no crossover then randomly return one parent
-			if (RandomGenerator.nextDouble() > crossoverProb) {
+			
+			if (RandomGenerator.nextDouble() <= crossoverProb) {
+				// Copy the first portion from A
+				for (int i = 0; i < pos; i++) {
+					individual.getChromosome().setGene(i, a.getChromosome().getGene(i));
+				}
+				// And the remainder from B
+				for (int i = pos; i < individual.getNumberOfGenes(); i++) {
+					individual.getChromosome().setGene(i, b.getChromosome().getGene(i));
+				}
+			} else {
+				// If no crossover then randomly return one parent
 				Individual tmp;
 				if (RandomGenerator.nextDouble() > 0.5d) {
 					tmp = a;
@@ -37,15 +46,6 @@ public class SinglePointCrossover implements CrossoverInterface {
 
 				for (int i = 0; i < individual.getNumberOfGenes(); i++) {
 					individual.getChromosome().setGene(i, tmp.getChromosome().getGene(i));
-				}
-			} else {
-				// Copy the first portion from A
-				for (int i = 0; i < pos; i++) {
-					individual.getChromosome().setGene(i, a.getChromosome().getGene(i));
-				}
-				// And the remainder from B
-				for (int i = pos; i < individual.getNumberOfGenes(); i++) {
-					individual.getChromosome().setGene(i, b.getChromosome().getGene(i));
 				}
 			}
 			

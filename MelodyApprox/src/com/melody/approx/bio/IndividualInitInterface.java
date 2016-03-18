@@ -11,7 +11,7 @@ import com.melody.approx.bio.Problem.ProblemException;
 public interface IndividualInitInterface {
 
 	// initialize an individual without a fitness value
-	public Individual nextIndividual() throws ChromosomeException, IndividualInitInterfaceException, ProblemException;
+	public Individual nextIndividual(int numberOfGenes) throws ChromosomeException, IndividualInitInterfaceException, ProblemException;
 
 	public class IndividualInitInterfaceException extends Exception {
 		private static final long serialVersionUID = 536348314796786425L;

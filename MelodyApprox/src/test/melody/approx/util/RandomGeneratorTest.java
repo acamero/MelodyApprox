@@ -85,7 +85,7 @@ public class RandomGeneratorTest {
 	@Test
 	public void nextGaussian() {
 		double d = RandomGenerator.nextGaussian();
-		assertTrue(Double.isFinite(d));
+		assertTrue(Double.isFinite(d));		
 	}
 	
 	@Test

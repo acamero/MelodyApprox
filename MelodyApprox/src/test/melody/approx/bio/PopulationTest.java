@@ -3,6 +3,7 @@ package test.melody.approx.bio;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.After;
@@ -18,6 +19,7 @@ import com.melody.approx.bio.LegendreInit;
 import com.melody.approx.bio.Population;
 import com.melody.approx.bio.Population.PopulationException;
 import com.melody.approx.bio.Problem.ProblemException;
+import com.melody.approx.bio.ProblemLegendre;
 import com.melody.approx.util.Log;
 import com.melody.approx.util.Log.LogLevel;
 import com.melody.approx.pitch.PitchContour;
@@ -46,9 +48,14 @@ public class PopulationTest {
 		PitchContour pc = new PitchContour();
 		pc.appendFrequency(0.0d, 440.0d);
 		// ProblemLegendre legendre = new ProblemLegendre(pc);
-		LegendreInit legInit = new LegendreInit(1);
+		LegendreInit legInit = new LegendreInit(440.0d, 1.0d);
 		init = legInit;
 		pop = new Population(popSize, numberOfGenes, init);
+		ProblemLegendre fit = new ProblemLegendre(pc);
+		for (Individual ind : pop.getPopulation()) {
+			ind.setFitness(fit.getFitness(ind));
+			Log.info("Individual added " + ind.toString());
+		}
 	}
 
 	@After
@@ -56,17 +63,20 @@ public class PopulationTest {
 	}
 
 	@Test(expected = PopulationException.class)
-	public void negPopSize() throws PopulationException, ChromosomeException, IndividualInitInterfaceException, ProblemException {
+	public void negPopSize()
+			throws PopulationException, ChromosomeException, IndividualInitInterfaceException, ProblemException {
 		pop = new Population(-1, numberOfGenes, init);
 	}
 
 	@Test(expected = PopulationException.class)
-	public void nullInit() throws PopulationException, ChromosomeException, IndividualInitInterfaceException, ProblemException {
+	public void nullInit()
+			throws PopulationException, ChromosomeException, IndividualInitInterfaceException, ProblemException {
 		pop = new Population(popSize, numberOfGenes, null);
 	}
 
 	@Test(expected = PopulationException.class)
-	public void negGenes() throws PopulationException, ChromosomeException, IndividualInitInterfaceException, ProblemException {
+	public void negGenes()
+			throws PopulationException, ChromosomeException, IndividualInitInterfaceException, ProblemException {
 		pop = new Population(popSize, -1, init);
 	}
 
@@ -78,42 +88,107 @@ public class PopulationTest {
 	@Test
 	public void replaceWorst() throws PopulationException, ChromosomeException {
 		List<Individual> offsprings = new ArrayList<Individual>();
-		offsprings.add(new Individual(numberOfGenes));
+		Individual tmp = new Individual(numberOfGenes);
+		tmp.setFitness(1.0d);
+		offsprings.add(tmp);
+		double expectedFitness = 0.0d;
+		for (Individual ind : pop.getPopulation()) {
+			expectedFitness += ind.getFitness();
+		}
+		expectedFitness -= pop.getPopulation().get(pop.getWorstPosition()).getFitness();
+		expectedFitness += tmp.getFitness();
 		pop.replaceIndividuals(offsprings);
-		fail("must implement assert");
+
+		double newFitness = 0.0d;
+		for (Individual ind : pop.getPopulation()) {
+			newFitness += ind.getFitness();
+		}
+		assertEquals(expectedFitness, newFitness, 0.000001d);
 	}
 
 	@Test
 	public void replaceN() throws PopulationException, ChromosomeException {
 		List<Individual> offsprings = new ArrayList<Individual>();
-		for (int i = 0; i < popSize - 2; i++) {
-			offsprings.add(new Individual(numberOfGenes));
+		int n =popSize - 3;
+		for (int i = 0; i < n; i++) {
+			Individual tmp = new Individual(numberOfGenes);
+			tmp.setFitness(1.0d);
+			offsprings.add(tmp);
 		}
+		
+		List<Double> fits = new ArrayList<Double>();
+		for (Individual ind : pop.getPopulation()) {
+			fits.add(ind.getFitness());
+		}
+		Collections.sort(fits);		
+		double expectedFitness = 0.0d;
+		for(int i=0;i<popSize-n;i++) {
+			expectedFitness += fits.get(i);
+		}
+		
+		for (Individual ind : offsprings) {
+			expectedFitness += ind.getFitness();
+		}
+		
 		Log.info("Replace N=" + offsprings.size() + " , Pop=" + popSize);
 		pop.replaceIndividuals(offsprings);
-		fail("must implement assert");
+		
+		double newFitness = 0.0d;
+		for (Individual ind : pop.getPopulation()) {
+			newFitness += ind.getFitness();
+		}
+
+		assertEquals(expectedFitness, newFitness, 0.000001d);
 	}
 
 	@Test
 	public void replaceElite() throws PopulationException, ChromosomeException {
 		List<Individual> offsprings = new ArrayList<Individual>();
 		for (int i = 0; i < popSize - 1; i++) {
-			offsprings.add(new Individual(numberOfGenes));
+			Individual tmp = new Individual(numberOfGenes);
+			tmp.setFitness(1.0d);
+			offsprings.add(tmp);
 		}
+
+		double expectedFitness = pop.getPopulation().get(pop.getBestPosition()).getFitness();
+		for (Individual ind : offsprings) {
+			expectedFitness += ind.getFitness();
+		}
+
 		Log.info("Replace elite (N=" + offsprings.size() + ")");
 		pop.replaceIndividuals(offsprings);
-		fail("must implement assert");
+
+		double newFitness = 0.0d;
+		for (Individual ind : pop.getPopulation()) {
+			newFitness += ind.getFitness();
+		}
+
+		assertEquals(expectedFitness, newFitness, 0.000001d);
 	}
-	
+
 	@Test
 	public void replaceEqual() throws PopulationException, ChromosomeException {
 		List<Individual> offsprings = new ArrayList<Individual>();
-		for (int i = 0; i < popSize ; i++) {
-			offsprings.add(new Individual(numberOfGenes));
+		for (int i = 0; i < popSize; i++) {
+			Individual tmp = new Individual(numberOfGenes);
+			tmp.setFitness(1.0d);
+			offsprings.add(tmp);
 		}
+
+		double expectedFitness = 0.0d;
+		for (Individual ind : offsprings) {
+			expectedFitness += ind.getFitness();
+		}
+
 		Log.info("Replace elite (N=" + offsprings.size() + ")");
 		pop.replaceIndividuals(offsprings);
-		fail("must implement assert");
+
+		double newFitness = 0.0d;
+		for (Individual ind : pop.getPopulation()) {
+			newFitness += ind.getFitness();
+		}
+
+		assertEquals(expectedFitness, newFitness, 0.000001d);
 	}
 
 	@Test(expected = PopulationException.class)
@@ -165,11 +240,11 @@ public class PopulationTest {
 		pop.replaceIndividuals(offsprings);
 		pop.getPopulation().add(new Individual(1));
 	}
-	
+
 	@Test(expected = UnsupportedOperationException.class)
 	public void replaceEqualAdd() throws PopulationException, ChromosomeException {
 		List<Individual> offsprings = new ArrayList<Individual>();
-		for (int i = 0; i < popSize ; i++) {
+		for (int i = 0; i < popSize; i++) {
 			offsprings.add(new Individual(numberOfGenes));
 		}
 		Log.info("Replace elite (N=" + offsprings.size() + ")");

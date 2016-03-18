@@ -60,7 +60,7 @@ public class Population {
 		
 		for (int i = 0; i < populationSize; i++) {
 			// the individuals are initialized without a fitness value
-			population.set(i, init.nextIndividual());		
+			population.set(i, init.nextIndividual(numberOfGenes));		
 		}
 		
 	}

@@ -46,7 +46,7 @@ public class Algorithm {
 		}
 
 		if (mutateInt == null) {
-			Log.error("Mutation interfave should not be null");
+			Log.error("Mutation interface should not be null");
 			throw new AlgorithmException("Mutation interface should not be null");
 		}
 
