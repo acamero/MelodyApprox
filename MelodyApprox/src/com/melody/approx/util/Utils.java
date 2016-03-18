@@ -8,6 +8,11 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class Utils {
 
 	public static void serialize(Object obj, String filePath) {
@@ -39,6 +44,7 @@ public class Utils {
 		obj = in.readObject();
 		in.close();
 		fileIn.close();
+		Log.info("Object deserialized from "+filePath);
 
 		return obj;
 	}

@@ -1,7 +1,13 @@
 package com.melody.approx.bio;
 
 import com.melody.approx.pitch.PitchContour;
+import com.melody.approx.util.Log;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public abstract class Problem implements FitnessInterface {
 	
 	protected PitchContour contour;
@@ -10,8 +16,10 @@ public abstract class Problem implements FitnessInterface {
 	public Problem(PitchContour contour) throws ProblemException {		
 		this.contour = contour;
 		if(this.contour==null) {
+			Log.error("Pitch contour should not be null");
 			throw new ProblemException("Pitch contour should not be null");
 		} else if(this.contour.getContour().isEmpty()) {
+			Log.error("Pitch contour should not be empty");
 			throw new ProblemException("Pitch contour should not be empty");
 		}
 	}

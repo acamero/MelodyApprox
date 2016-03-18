@@ -3,7 +3,13 @@ package com.melody.approx.bio;
 import java.util.Map.Entry;
 
 import com.melody.approx.pitch.PitchContour;
+import com.melody.approx.util.Log;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class ProblemLegendre extends Problem {
 
 	public ProblemLegendre(PitchContour contour) throws ProblemException {
@@ -16,10 +22,12 @@ public class ProblemLegendre extends Problem {
 
 		for (Entry<Double, Double> c : contour.getContour().entrySet()) {
 			// offset, pitch
+			// Log.info("Processing note (" + c.getKey() + "," + c.getValue() + ")");
+			double note = 0.0d;
 			for (int i = 0; i < individual.getNumberOfGenes(); i++) {
-				fitness += Math.pow(individual.getChromosome().getGene(i) * legendrePoly(c.getKey(), i) - c.getValue(),
-						2.0d);
+				note += individual.getChromosome().getGene(i) * legendrePoly(c.getKey(), i);
 			}
+			fitness += Math.pow(note - c.getValue(), 2.0d);
 		}
 
 		return fitness;
@@ -48,6 +56,7 @@ public class ProblemLegendre extends Problem {
 			// * t) * 0.125d;
 			return 7.875d * Math.pow(t, 5.0d) - 8.75d * Math.pow(t, 3.0d) + 1.875d * t;
 		default:
+			Log.error("Unimplemented Legendre polynomials order (order=" + order + ")");
 			throw new ProblemException("Unimplemented Legendre polynomials order (order=" + order + ")");
 		}
 	}

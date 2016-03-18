@@ -21,28 +21,31 @@ public class RandomGenerator {
 
 	public static void nextSeed() {
 		seedPosition = (seedPosition + 1) % seeds.length;
+		Log.info("Move to next seed (position=" + seedPosition + ")");
 		generator = new MersenneTwister(seeds[seedPosition]);
 	}
 
 	public static void setSeed(int seedPos) {
 		seedPosition = Math.abs(seedPos) % seeds.length;
+		Log.info("Set seed (position=" + seedPosition + ")");
 		generator = new MersenneTwister(seeds[seedPosition]);
 	}
-	
+
 	public static int getActualSeed() {
 		return seeds[seedPosition];
 	}
-	
+
 	public static int getActualSeedPosition() {
 		return seedPosition;
 	}
-	
+
 	public static int getNumberOfSeeds() {
 		return seeds.length;
 	}
 
 	/**
 	 * Random double in the interval 0..1
+	 * 
 	 * @return
 	 */
 	public static double nextDouble() {
@@ -51,6 +54,7 @@ public class RandomGenerator {
 
 	/**
 	 * Random double in the interval 0..1
+	 * 
 	 * @return
 	 */
 	public static double nextDouble(boolean includeZero, boolean includeOne) {
@@ -60,4 +64,20 @@ public class RandomGenerator {
 	public static int nextInt() {
 		return generator.nextInt();
 	}
+
+	/**
+	 * Returns the next pseudorandom, Gaussian ("normally") distributed double
+	 * value with mean 0.0 and standard deviation 1.0 from this random number
+	 * generator's sequence.
+	 * 
+	 * @return
+	 */
+	public static double nextGaussian() {
+		return generator.nextGaussian();
+	}
+
+	public static double nextGaussian(double standardDeviation, double mean) {
+		return generator.nextGaussian() * standardDeviation + mean;
+	}
+
 }

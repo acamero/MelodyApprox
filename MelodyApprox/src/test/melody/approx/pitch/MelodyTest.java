@@ -10,6 +10,11 @@ import com.melody.approx.pitch.PitchContour;
 import com.melody.approx.pitch.PitchContour.ContourType;
 import com.melody.approx.pitch.PitchContour.PitchContourException;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class MelodyTest {
 
 	@Test(expected = MelodyException.class)

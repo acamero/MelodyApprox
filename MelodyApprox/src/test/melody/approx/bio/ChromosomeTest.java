@@ -7,6 +7,11 @@ import org.junit.Test;
 import com.melody.approx.bio.Chromosome;
 import com.melody.approx.bio.Chromosome.ChromosomeException;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class ChromosomeTest {
 
 	private Chromosome chromosome;

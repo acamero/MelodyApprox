@@ -20,6 +20,11 @@ import com.melody.approx.util.Log;
 import com.melody.approx.util.Log.LogLevel;
 import com.melody.approx.util.Utils;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class UtilsTest {
 
 	private static String serializeFile = "temp.ser";

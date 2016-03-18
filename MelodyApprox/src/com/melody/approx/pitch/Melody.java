@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import com.melody.approx.pitch.PitchContour.ContourType;
 import com.melody.approx.pitch.PitchContour.PitchContourException;
+import com.melody.approx.util.Log;
 
 /**
  * 
@@ -29,9 +30,11 @@ public class Melody implements Serializable {
 			if (contourType.equals(contour.getContourType())) {
 				phrases.put(offset, contour);
 			} else {
+				Log.error("Could not add phrase because it has different contour type");
 				throw new MelodyException("Could not add phrase because it has different contour type");
 			}
 		} else {
+			Log.error("Could not add phrase, check offset or pitch contour");
 			throw new MelodyException("Could not add phrase, check offset or pitch contour");
 		}
 	}

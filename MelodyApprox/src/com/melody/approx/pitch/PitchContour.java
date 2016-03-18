@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.melody.approx.util.Log;
+
 /**
  * 
  * @author Andrés Camero Unzueta
@@ -27,8 +29,10 @@ public class PitchContour implements Serializable {
 
 	public void appendFrequency(double time, double frequency) throws PitchContourException {
 		if (frequency <= 0.0d) {
+			Log.error("Frequency should be greater than 0");
 			throw new PitchContourException("Frequency should be greater than 0");
 		} else if (time < 0.0d) {
+			Log.error("Duration should be greater than 0");
 			throw new PitchContourException("Duration should be greater than 0");
 		}
 
@@ -45,8 +49,10 @@ public class PitchContour implements Serializable {
 
 	public void appendMidi(double time, int midi) throws PitchContourException {
 		if (midi <= 0.0d) {
+			Log.error("MIDI should be greater than 0");
 			throw new PitchContourException("MIDI should be greater than 0");
 		} else if (time < 0.0d) {
+			Log.error("Duration should be greater than 0");
 			throw new PitchContourException("Duration should be greater than 0");
 		}
 		contour.put(time, midiToFrequency(midi));
@@ -62,6 +68,7 @@ public class PitchContour implements Serializable {
 
 	public void appendSilence(double time) throws PitchContourException {
 		if (time <= 0.0d) {
+			Log.error("Duration should be greater than 0");
 			throw new PitchContourException("Duration should be greater than 0");
 		}
 		contour.put(time, SILENCE);
@@ -96,6 +103,7 @@ public class PitchContour implements Serializable {
 
 	public static int frequencyToMidi(double frequency) throws PitchContourException {
 		if (frequency <= 0.0d) {
+			Log.error("Frequency should be greater than 0");
 			throw new PitchContourException("Frequency should be greater than 0");
 		}
 		return (int) Math.round(Math.max(0.0d, Math.log(frequency / 440.0d) / LOG2 * 12.0d + 69.0d));
@@ -103,6 +111,7 @@ public class PitchContour implements Serializable {
 
 	public static double midiToFrequency(int midi) throws PitchContourException {
 		if (midi <= 0) {
+			Log.error("MIDI should be greater than 0");
 			throw new PitchContourException("MIDI should be greater than 0");
 		}
 		return 440.0d * Math.pow(2.0d, (midi - 69.0d) / 12.0d);

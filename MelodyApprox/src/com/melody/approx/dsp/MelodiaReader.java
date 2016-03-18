@@ -60,14 +60,17 @@ public abstract class MelodiaReader {
 
 			}
 		} catch (IOException e) {
+			Log.error("Unable to process 'melodia' (" + e.getMessage() + ")");
 			throw new MelodiaReaderException("Unable to process 'melodia' (" + e.getMessage() + ")", e.getCause());
 		} catch (NumberFormatException e) {
+			Log.error("Invalid format");
 			throw new MelodiaReaderException("Invalid format", e.getCause());
 		} finally {
 			if (bufferedReader != null) {
 				try {
 					bufferedReader.close();
 				} catch (IOException e) {
+					Log.error("Unable to close file '" + filePath + "'");
 					throw new MelodiaReaderException("Unable to close file '" + filePath + "'");
 				}
 			}

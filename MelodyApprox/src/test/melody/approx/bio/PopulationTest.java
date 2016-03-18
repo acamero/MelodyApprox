@@ -20,10 +20,14 @@ import com.melody.approx.bio.Population.PopulationException;
 import com.melody.approx.bio.Problem.ProblemException;
 import com.melody.approx.util.Log;
 import com.melody.approx.util.Log.LogLevel;
-import com.melody.approx.bio.ProblemLegendre;
 import com.melody.approx.pitch.PitchContour;
 import com.melody.approx.pitch.PitchContour.PitchContourException;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class PopulationTest {
 
 	private Population pop;
@@ -41,8 +45,8 @@ public class PopulationTest {
 			ProblemException, PitchContourException {
 		PitchContour pc = new PitchContour();
 		pc.appendFrequency(0.0d, 440.0d);
-		ProblemLegendre legendre = new ProblemLegendre(pc);
-		LegendreInit legInit = new LegendreInit(1, legendre);
+		// ProblemLegendre legendre = new ProblemLegendre(pc);
+		LegendreInit legInit = new LegendreInit(1);
 		init = legInit;
 		pop = new Population(popSize, numberOfGenes, init);
 	}

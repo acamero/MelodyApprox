@@ -11,6 +11,11 @@ import org.junit.Test;
 import com.melody.approx.bio.Chromosome.ChromosomeException;
 import com.melody.approx.bio.Individual;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class IndividualTest {
 
 	private Individual ind;

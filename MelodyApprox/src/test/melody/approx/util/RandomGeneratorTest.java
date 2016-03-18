@@ -4,9 +4,12 @@ import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.melody.approx.util.Log;
 import com.melody.approx.util.RandomGenerator;
+import com.melody.approx.util.Log.LogLevel;
 
 /**
  * 
@@ -15,6 +18,11 @@ import com.melody.approx.util.RandomGenerator;
  */
 public class RandomGeneratorTest {
 
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		Log.setLogLevel(LogLevel.INFO);
+	}
+	
 	@Before
 	public void setUp() {
 		RandomGenerator.setSeed(0);
@@ -72,6 +80,20 @@ public class RandomGeneratorTest {
 		int i = RandomGenerator.nextInt();
 		assertTrue(Integer.MAX_VALUE >= i);
 		assertTrue(Integer.MIN_VALUE <= i);
+	}
+	
+	@Test
+	public void nextGaussian() {
+		double d = RandomGenerator.nextGaussian();
+		assertTrue(Double.isFinite(d));
+	}
+	
+	@Test
+	public void nextGaussianStdMean() {
+		double std = 1.5d;
+		double mean = 60.0d; 
+		double d = RandomGenerator.nextGaussian(std, mean);
+		assertTrue(Double.isFinite(d));
 	}
 
 }

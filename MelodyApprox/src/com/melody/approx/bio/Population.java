@@ -9,6 +9,11 @@ import com.melody.approx.bio.IndividualInitInterface.IndividualInitInterfaceExce
 import com.melody.approx.bio.Problem.ProblemException;
 import com.melody.approx.util.Log;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class Population {
 
 	private int populationSize;
@@ -20,7 +25,6 @@ public class Population {
 	private double avgFitness;
 	private int bestPosition;
 	private int worstPosition;
-	private int numberOfEvaluations;
 
 	public Population(int populationSize, int numberOfGenes, IndividualInitInterface init)
 			throws PopulationException, ChromosomeException, IndividualInitInterfaceException, ProblemException {
@@ -31,29 +35,34 @@ public class Population {
 				popArray = new Individual[this.populationSize];
 				population = Arrays.asList(popArray);
 			} else {
+				Log.error("The number of genes should be greater than zero");
 				throw new PopulationException("The number of genes should be greater than zero");
 			}
 		} else {
+			Log.error("Population size should be greater than zero");
 			throw new PopulationException("Population size should be greater than zero");
 		}
 
 		if (init == null) {
+			Log.error("IndividualInitInterface should not be null");
 			throw new PopulationException("IndividualInitInterface should not be null");
 		} else {
 			initPopulation(numberOfGenes, init);
 		}
+		
+		// initialize fitness
+		bestFitness = Double.MAX_VALUE;
 		bestFitnessEver = Double.MAX_VALUE;
 	}
 
 	private void initPopulation(int numberOfGenes, IndividualInitInterface init)
 			throws ChromosomeException, IndividualInitInterfaceException, ProblemException {
-		numberOfEvaluations = 0;
+		
 		for (int i = 0; i < populationSize; i++) {
-			// the individuals are initialized with a fitness value
-			population.set(i, init.nextIndividual());
-			numberOfEvaluations++;
+			// the individuals are initialized without a fitness value
+			population.set(i, init.nextIndividual());		
 		}
-		computeStats();
+		
 	}
 
 	public int getPopulationSize() {
@@ -109,10 +118,7 @@ public class Population {
 		}
 
 		avgFitness = total / (double) populationSize;
-	}
-
-	public int getNumberOfEvaluations() {
-		return numberOfEvaluations;
+		Log.info("Stats:\tAVG="+avgFitness+"\tBestFitness="+bestFitness+"\tEver="+bestFitnessEver);
 	}
 
 	/**
@@ -125,6 +131,7 @@ public class Population {
 	public void replaceIndividuals(List<Individual> offsprings) throws PopulationException {
 		if (offsprings == null || offsprings.isEmpty()) {
 			// something bad happen
+			Log.error("The number of offsprings should be grater than zero");
 			throw new PopulationException("The number of offsprings should be grater than zero");
 		} else if (offsprings.size() == 1) {
 			// steady state
@@ -151,6 +158,9 @@ public class Population {
 			}
 			Log.info("Replace "+n+" individuals");			
 		}
+		
+		// update population statistics
+		computeStats();
 	}
 	
 	public List<Individual> getPopulation() {

@@ -2,6 +2,11 @@ package com.melody.approx.bio;
 
 import com.melody.approx.bio.Chromosome.ChromosomeException;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class Individual implements Comparable<Individual> {
 
 	private Chromosome chromosome;
@@ -9,6 +14,7 @@ public class Individual implements Comparable<Individual> {
 
 	public Individual(int numberOfGenes) throws ChromosomeException {
 		chromosome = new Chromosome(numberOfGenes);
+		fitness = Double.MAX_VALUE;
 	}
 
 	public double getFitness() {
