@@ -1,6 +1,12 @@
 package com.melody.approx;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 
 import org.apache.commons.cli.CommandLine;
@@ -11,6 +17,16 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.melody.approx.bio.Algorithm.AlgorithmException;
+import com.melody.approx.bio.Chromosome.ChromosomeException;
+import com.melody.approx.bio.CrossoverInterface.CrossoverException;
+import com.melody.approx.bio.IndividualInitInterface.IndividualInitInterfaceException;
+import com.melody.approx.bio.MelodyProcessor;
+import com.melody.approx.bio.MelodyProcessor.AlgorithmType;
+import com.melody.approx.bio.MelodyProcessor.MelodyProcessorException;
+import com.melody.approx.bio.MutationInterface.MutationException;
+import com.melody.approx.bio.Population.PopulationException;
+import com.melody.approx.bio.Problem.ProblemException;
 import com.melody.approx.dsp.MelodiaReader;
 import com.melody.approx.dsp.MelodiaReader.MelodiaReaderException;
 import com.melody.approx.dsp.SilenceChopper;
@@ -20,6 +36,7 @@ import com.melody.approx.pitch.PitchContour.ContourType;
 import com.melody.approx.pitch.PitchContour.PitchContourException;
 import com.melody.approx.util.Log;
 import com.melody.approx.util.Log.LogLevel;
+import com.melody.approx.util.RandomGenerator;
 import com.melody.approx.util.Utils;
 
 /**
@@ -36,7 +53,7 @@ public class Main {
 	}
 
 	private static Melody parseMelodia(ParseMelodia funcOpt, String filePath, boolean isMidi)
-			throws MelodiaReaderException, PitchContourException, MelodyException {
+			throws MelodiaReaderException, PitchContourException, MelodyException, IOException {
 		MelodiaReader reader = null;
 		switch (funcOpt) {
 		case DEFAULT: // proceed with method SILENCE_CHOPPER
@@ -47,13 +64,17 @@ public class Main {
 			break;
 		}
 
-		Melody melody = reader.getMelody(filePath);
+		Melody melody = null;
+		FileReader fr = new FileReader(filePath);
+		BufferedReader br = new BufferedReader(fr);
+		melody = reader.getMelody(br);
 		if (isMidi) {
 			melody = Melody.transform(melody, ContourType.MIDI);
 		}
+		br.close();
 		return melody;
-	}	
-	
+	}
+
 	public static String getFileName(String originalFilePath, String newExtension) {
 		String filePath;
 		if (originalFilePath.contains("/")) {
@@ -63,30 +84,44 @@ public class Main {
 		}
 
 		if (filePath.contains(".")) {
-			filePath = filePath.substring(0, filePath.lastIndexOf(".")+1) + newExtension;
+			filePath = filePath.substring(0, filePath.lastIndexOf(".") + 1) + newExtension;
 		} else {
-			filePath += "."+newExtension;
+			filePath += "." + newExtension;
 		}
 		return filePath;
 	}
 
-	
 	private static Options setOptions() {
 		// create the Options
 		Options options = new Options();
+		// set the logging level
 		options.addOption(Option.builder().longOpt("log-level").hasArg()
 				.desc("set the logging level (" + Arrays.toString(Log.LogLevel.values()) + ")").build());
+		// input file
 		options.addOption(Option.builder().longOpt("file-name").hasArg().desc("set the file to be process").build());
+		// help menu
 		options.addOption("h", "help", false, "print help information");
+		// parse a MELODIA file (the file contains frequencies) using the
+		// specified melody chopper
 		options.addOption(Option.builder().longOpt("parse-melodia").hasArg().desc(
 				"parse 'melodia' plugin file using specified method (" + Arrays.toString(ParseMelodia.values()) + ")")
 				.build());
+		// set MIDI as the preferred encode
 		options.addOption(Option.builder().longOpt("pitch-midi")
 				.desc("process the melody using pitch encoded in MIDI format").build());
+		// write output to console
 		options.addOption(
 				Option.builder().longOpt("out-console").desc("output results are printed to the console").build());
+		// write output to a file in the specified directory
 		options.addOption(Option.builder().longOpt("out-dir").hasArg().desc("output directory").build());
-		
+		// process a melody using the specified algorithm
+		options.addOption(Option.builder().longOpt("algorithm").hasArg()
+				.desc("process a melody using bio inspired algorithm (" + Arrays.toString(AlgorithmType.values()) + ")")
+				.build());
+		// select the seed to be used in the pseudo-random number generation
+		options.addOption(
+				Option.builder().longOpt("seed").hasArg().desc("set the number of the seed to be used").build());
+
 		return options;
 	}
 
@@ -96,7 +131,8 @@ public class Main {
 		Options options = setOptions();
 		String filePath = null;
 		ParseMelodia parseMelodia = null;
-		String outDirectory = "";
+		AlgorithmType algorithm = null;
+		String outDirectory = "./";
 		boolean isMidi = false;
 		boolean isConsole = false;
 
@@ -125,13 +161,27 @@ public class Main {
 				isConsole = true;
 				Log.info("Set output to console");
 			}
-			
+
 			if (line.hasOption("out-dir")) {
 				outDirectory = line.getOptionValue("out-dir");
-				if(!outDirectory.endsWith("/")) {
+				if (!outDirectory.endsWith("/")) {
 					outDirectory = outDirectory + "/";
 				}
 				Log.info("Set output directory to " + outDirectory);
+			}
+
+			if (line.hasOption("algorithm")) {
+				String tmp = line.getOptionValue("algorithm");
+				for (AlgorithmType f : AlgorithmType.values()) {
+					if (f.toString().compareToIgnoreCase(tmp) == 0) {
+						algorithm = f;
+						Log.info("Process melody algorithm selection: " + algorithm.toString());
+					}
+				}
+				if (algorithm == null) {
+					Log.error("Invalid algorithm named");
+					return;
+				}
 			}
 
 			if (line.hasOption("parse-melodia")) {
@@ -155,10 +205,18 @@ public class Main {
 					// stop processing
 					return;
 				}
+				Log.info("File name=" + filePath);
 			} else {
 				Log.error("An input file must be provided");
 				// stop processing
 				return;
+			}
+
+			if (line.hasOption("seed")) {
+				String seedLine = line.getOptionValue("seed");
+				Log.info("Seed number argument parsed (seed '" + seedLine + "' selected)");
+				int seed = Integer.valueOf(seedLine);
+				RandomGenerator.setSeed(seed);				
 			}
 
 		} catch (ParseException exp) {
@@ -166,10 +224,15 @@ public class Main {
 		}
 
 		Melody melody = null;
+		// parse MELODIA file
 		if (parseMelodia != null) {
 			try {
 				melody = parseMelodia(parseMelodia, filePath, isMidi);
 			} catch (MelodiaReaderException | PitchContourException | MelodyException e) {
+				Utils.exceptionToLog(e);
+				// quit program
+				return;
+			} catch (IOException e) {
 				Utils.exceptionToLog(e);
 				// quit program
 				return;
@@ -179,16 +242,106 @@ public class Main {
 				System.out.println(melody.toString());
 			} else {
 				File file = new File(outDirectory);
-				if(!file.exists()) {
-					if(file.mkdirs()) {
-						Log.info("Directory "+outDirectory+" succesfully created");
+				if (!file.exists()) {
+					if (file.mkdirs()) {
+						Log.info("Directory " + outDirectory + " succesfully created");
 					} else {
-						Log.error("Unable to create directory "+outDirectory);
+						Log.error("Unable to create directory " + outDirectory);
 						return;
 					}
 				}
-				String serFilePath = outDirectory  + getFileName(filePath, "ser");
+				String serFilePath = outDirectory + getFileName(filePath, "ser");
 				Utils.serialize(melody, serFilePath);
+			}
+		}
+
+		// process melody using bio-inspired algorithm
+		if (algorithm != null) {
+			if (melody == null) {
+				// if this is the case, we have to retrieve the melody from the
+				// specified file
+				try {
+					melody = (Melody) Utils.deserialize(filePath);
+					if (isMidi && !melody.getContourType().equals(ContourType.MIDI)) {
+						melody = Melody.transform(melody, ContourType.MIDI);
+					}
+				} catch (ClassNotFoundException | IOException e) {
+					Log.error("Unable to deserialize the melody from the given file");
+					Utils.exceptionToLog(e);
+					return;
+				} catch (PitchContourException | MelodyException e) {
+					Log.error("Unable to continue processing");
+					return;
+				}
+			} // otherwise use the melody already parsed
+
+			try {
+				MelodyProcessor processor = new MelodyProcessor(algorithm, melody);
+				String prepend;
+				if (filePath.contains("/")) {
+					prepend = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length()) +";";
+				} else {
+					prepend = filePath + ";";
+				}
+				BufferedWriter partialWriter = null;
+				BufferedWriter finalWriter = null;
+
+				if (isConsole) {
+					partialWriter = new BufferedWriter(new OutputStreamWriter(System.out));
+					finalWriter = new BufferedWriter(new OutputStreamWriter(System.out));
+				} else {
+					boolean init = false;
+					// partial results to one file
+					String outPath = outDirectory + getFileName(filePath, "detail.csv");
+					File file = new File(outPath);
+					if (!file.exists()) {
+						file.createNewFile();
+						init = true;
+					}
+					// turn append mode "on"
+					FileWriter fw = new FileWriter(file, true);
+					partialWriter = new BufferedWriter(fw);
+					if (init) {
+						// write a header to the file
+						partialWriter.write("file;offset;startTime;endTime;fitness;evaluations;points;solution\n");
+						partialWriter.flush();
+					}
+
+					init = false;
+					// and summarized results to another file
+					outPath = outDirectory + getFileName(filePath, "summary.csv");
+					file = new File(outPath);
+					if (!file.exists()) {
+						file.createNewFile();
+						init = true;
+					}
+					// turn append mode "on"
+					fw = new FileWriter(file, true);
+					finalWriter = new BufferedWriter(fw);
+
+					if (init) {
+						// write a header to the file
+						finalWriter.write("file;startTime;endTime;fitness\n");
+						finalWriter.flush();
+					}
+				}
+
+				processor.processMelody(partialWriter, finalWriter, prepend);
+
+				partialWriter.close();
+				finalWriter.close();
+
+			} catch (MelodyProcessorException e) {
+				Log.error("Unable to setup MelodyProcessor");
+				return;
+			} catch (ProblemException | AlgorithmException | PopulationException | ChromosomeException
+					| IndividualInitInterfaceException | CrossoverException | MutationException e) {
+				Log.error("Unable to process melody");
+				return;
+			} catch (IOException e) {
+				Log.error("Unable to open or write to the output buffer");
+				Utils.exceptionToLog(e);
+				return;
 			}
 		}
 

@@ -33,7 +33,7 @@ public class LegendreInit implements IndividualInitInterface {
 			individual.getChromosome().setGene(i, RandomGenerator.nextGaussian());
 		}
 
-		Log.info("New individual: "+individual.toString());
+		Log.debug("New individual: "+individual.toString());
 		return individual;
 	}
 

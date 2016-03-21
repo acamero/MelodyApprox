@@ -1,1 +1,4 @@
 /bin/
+/test/*.ser
+/test/*.detail.csv
+/test/*.summary.csv

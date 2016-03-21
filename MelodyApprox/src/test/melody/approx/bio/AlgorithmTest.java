@@ -48,7 +48,7 @@ public class AlgorithmTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Log.setLogLevel(LogLevel.INFO);
+		Log.setLogLevel(LogLevel.DEBUG);
 	}
 
 	@AfterClass

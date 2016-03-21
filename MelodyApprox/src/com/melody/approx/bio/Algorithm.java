@@ -16,7 +16,9 @@ import com.melody.approx.util.RandomGenerator;
  *
  */
 public class Algorithm {
-
+	// report the statistics every EVALUATIONS_REPORT evaluations 
+	private static final int EVALUATIONS_REPORT = 500;
+	
 	private FitnessInterface fitnessCalc;
 	private CrossoverInterface crossoverInt;
 	private MutationInterface mutateInt;
@@ -58,7 +60,7 @@ public class Algorithm {
 		if (crossoverProb < 0.0d || crossoverProb > 1.0d) {
 			Log.warning("Crossover probability is out of probability range");
 		}
-		
+
 		if (mutationProb < 0.0d || mutationProb > 1.0d) {
 			Log.warning("Mutation probability is out of probability range");
 		}
@@ -87,7 +89,15 @@ public class Algorithm {
 		for (Individual ind : individuals) {
 			ind.setFitness(fitnessCalc.getFitness(ind));
 			evaluations++;
+			// from time to time, report the stats
+			if(evaluations%EVALUATIONS_REPORT==0) {
+				Log.info(statsToString());
+			}
 		}
+	}
+
+	public String statsToString() {
+		return "Evaluations="+evaluations+"\t"+population.statsToString();
 	}
 
 	public Individual startAlgorithm()
@@ -103,8 +113,7 @@ public class Algorithm {
 				// mutate individual
 				mutateInt.mutate(mutationProb, ind);
 				// add individual to the list of offsprings
-				offspring.add(ind);
-				evaluations++;
+				offspring.add(ind);				
 			}
 			// compute the fitness of the offspring
 			calculateFitness(offspring);
@@ -135,10 +144,11 @@ public class Algorithm {
 			}
 		} while (p1 == p2);
 
-		if (population.getPopulation().get(p1).getFitness() < population.getPopulation().get(p2).getFitness())
+		if (population.getPopulation().get(p1).getFitness() < population.getPopulation().get(p2).getFitness()) {
 			return population.getPopulation().get(p1);
-		else
+		} else {
 			return population.getPopulation().get(p2);
+		}
 	}
 
 	public class AlgorithmException extends Exception {

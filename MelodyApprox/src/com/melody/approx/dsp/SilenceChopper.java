@@ -1,6 +1,7 @@
 package com.melody.approx.dsp;
 
 import java.util.Map.Entry;
+import java.io.BufferedReader;
 import java.util.TreeMap;
 
 import com.melody.approx.pitch.PitchContour;
@@ -17,8 +18,8 @@ import com.melody.approx.util.Log;
 public class SilenceChopper extends MelodiaReader {
 		
 	@Override
-	public Melody getMelody(String filePath) throws MelodiaReaderException, PitchContourException, MelodyException {
-		PitchContour fc = readMelodia(filePath, false);
+	public Melody getMelody(BufferedReader bufferedReader) throws MelodiaReaderException, PitchContourException, MelodyException {
+		PitchContour fc = readMelodia(bufferedReader, false);
 		return chop(fc);
 	}
 

@@ -74,5 +74,20 @@ public class MainTest {
 		assertEquals("name.new", Main.getFileName("name", "new"));
 	}
 	
+	@Test 
+	public void fullProcess() {
+		// Log.setLogLevel(LogLevel.INFO);
+		String[] args = new String[6];
+		args[0] = "--file-name=test/london-bridge-melodia.csv";
+		args[1] = "--parse-melodia=SILENCE_CHOPPER";
+		args[2] = "--out-dir=test";
+		args[3] = "--algorithm=LEGENDRE3";
+		args[4] = "--pitch-midi";
+		args[5] = "--seed=2";
+		
+		Main.main(args);
+		
+		fail("Not implemented yet");
+	}
 	
 }

@@ -8,7 +8,7 @@ package com.melody.approx.util;
 public class Log {
 
 	public enum LogLevel {
-		SILENT(0), ERROR(10), WARNING(20), INFO(30);
+		SILENT(0), ERROR(10), WARNING(20), INFO(30), DEBUG(40);
 		private int level;
 
 		private LogLevel(int level ) {
@@ -57,6 +57,12 @@ public class Log {
 	
 	public static void info(String message) {
 		if(logLevel.isLogging(LogLevel.INFO)) {
+			toLog(message);
+		}
+	}
+	
+	public static void debug(String message) {
+		if(logLevel.isLogging(LogLevel.DEBUG)) {
 			toLog(message);
 		}
 	}

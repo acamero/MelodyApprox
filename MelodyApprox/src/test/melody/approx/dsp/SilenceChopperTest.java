@@ -2,7 +2,9 @@ package test.melody.approx.dsp;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map.Entry;
@@ -106,14 +108,19 @@ public class SilenceChopperTest {
 	}
 
 	@Test
-	public void correctFileOffset() throws MelodiaReaderException, PitchContourException, MelodyException {
-		Melody mTest = mReader.getMelody(correct);	
+	public void correctFileOffset() throws MelodiaReaderException, PitchContourException, MelodyException, IOException {
+		FileReader fr = new FileReader(correct);
+		BufferedReader br = new BufferedReader(fr);
+		Melody mTest = mReader.getMelody(br);	
 		assertEquals(mTest.getPhrases().keySet(), melody.getPhrases().keySet());
+		br.close();
 	}
 	
 	@Test
-	public void correctFilePhrases() throws MelodiaReaderException, PitchContourException, MelodyException {
-		Melody mTest = mReader.getMelody(correct);	
+	public void correctFilePhrases() throws MelodiaReaderException, PitchContourException, MelodyException, IOException {
+		FileReader fr = new FileReader(correct);
+		BufferedReader br = new BufferedReader(fr);
+		Melody mTest = mReader.getMelody(br);	
 		for(Entry<Double,PitchContour> s : melody.getPhrases().entrySet()) {
 			PitchContour pc = mTest.getPhrases().get(s.getKey());
 			double sumOffset = 0.0d, sumOffsetTest = 0.0d;
@@ -130,11 +137,15 @@ public class SilenceChopperTest {
 			assertEquals(sumFreq, sumFreqTest, 0.1d);
 			assertEquals(sumOffset, sumOffsetTest, 1.0d);
 		}
+		br.close();
 	}
 	
 	@Test
-	public void disorderedFilePhrases() throws MelodiaReaderException, PitchContourException, MelodyException {
-		Melody mTest = mReader.getMelody(disordered);	
+	public void disorderedFilePhrases()
+			throws MelodiaReaderException, PitchContourException, MelodyException, IOException {
+		FileReader fr = new FileReader(disordered);
+		BufferedReader br = new BufferedReader(fr);
+		Melody mTest = mReader.getMelody(br);	
 		for(Entry<Double,PitchContour> s : melody.getPhrases().entrySet()) {
 			PitchContour pc = mTest.getPhrases().get(s.getKey());
 			double sumOffset = 0.0d, sumOffsetTest = 0.0d;
@@ -151,12 +162,16 @@ public class SilenceChopperTest {
 			assertEquals(sumFreq, sumFreqTest, 0.1d);
 			assertEquals(sumOffset, sumOffsetTest, 1.0d);
 		}
+		br.close();
 	}
 	
 	@Test
-	public void disorderedFileOffset() throws MelodiaReaderException, PitchContourException, MelodyException {
-		Melody mTest = mReader.getMelody(disordered);		
+	public void disorderedFileOffset() throws MelodiaReaderException, PitchContourException, MelodyException, IOException {
+		FileReader fr = new FileReader(disordered);
+		BufferedReader br = new BufferedReader(fr);
+		Melody mTest = mReader.getMelody(br);		
 		assertEquals(mTest.getPhrases().keySet(), melody.getPhrases().keySet());
+		br.close();
 	}
 
 }

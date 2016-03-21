@@ -1,7 +1,6 @@
 package com.melody.approx.dsp;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 
 import com.melody.approx.pitch.Melody;
@@ -28,20 +27,16 @@ public abstract class MelodiaReader {
 		this.separator = separator;
 	}
 
-	public abstract Melody getMelody(String filePath)
+	public abstract Melody getMelody(BufferedReader bufferedReader)
 			throws MelodiaReaderException, PitchContourException, MelodyException;
 
-	protected PitchContour readMelodia(String filePath, boolean convertNegative)
+	protected PitchContour readMelodia(BufferedReader bufferedReader, boolean convertNegative)
 			throws MelodiaReaderException, PitchContourException {
 		String line;
-		PitchContour contour = new PitchContour(ContourType.FREQUENCY);
-		FileReader fileReader;
-		BufferedReader bufferedReader = null;
+		PitchContour contour = new PitchContour(ContourType.FREQUENCY);		
 
 		try {
-			fileReader = new FileReader(filePath);
-			bufferedReader = new BufferedReader(fileReader);
-
+			
 			while ((line = bufferedReader.readLine()) != null) {
 				String[] values = line.split(separator);
 				double time = Double.parseDouble(values[0]);
@@ -52,10 +47,10 @@ public abstract class MelodiaReader {
 
 				if (freq > 0.0d) {
 					contour.appendFrequency(time, freq);
-					Log.info("Read from 'melodia' (t=" + time + ", f=" + freq + ")");
+					Log.debug("Read from 'melodia' (t=" + time + ", f=" + freq + ")");
 				} else {
 					contour.appendSilence(time);
-					Log.info("Read from 'melodia' (t=" + time + ", silence)");
+					Log.debug("Read from 'melodia' (t=" + time + ", silence)");
 				}
 
 			}
@@ -65,16 +60,7 @@ public abstract class MelodiaReader {
 		} catch (NumberFormatException e) {
 			Log.error("Invalid format");
 			throw new MelodiaReaderException("Invalid format", e.getCause());
-		} finally {
-			if (bufferedReader != null) {
-				try {
-					bufferedReader.close();
-				} catch (IOException e) {
-					Log.error("Unable to close file '" + filePath + "'");
-					throw new MelodiaReaderException("Unable to close file '" + filePath + "'");
-				}
-			}
-		}
+		} 
 
 		return contour;
 	}

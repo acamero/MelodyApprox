@@ -94,10 +94,11 @@ public class Population {
 	}
 
 	public void computeStats() {
-		double total;
-		total = 0.0d;
+		double total = 0.0d;
 		bestFitness = population.get(0).getFitness();
+		worstFitness = population.get(0).getFitness();
 		bestPosition = 0;
+		worstPosition = 0;
 
 		for (int i = 0; i < populationSize; i++) {
 
@@ -118,9 +119,14 @@ public class Population {
 		}
 
 		avgFitness = total / (double) populationSize;
-		Log.info("Stats:\tAVG="+avgFitness+"\tBestFitness="+bestFitness+"\tEver="+bestFitnessEver);
+		Log.debug("Stats:\tAVG="+avgFitness+"\tBestFitness="+bestFitness+"\tEver="+bestFitnessEver);
+		Log.debug("Positions: \tbest="+bestPosition+"\tworst="+worstPosition);
 	}
 
+	public String statsToString() {
+		return "AVG="+avgFitness+"\tBestFitness="+bestFitness+"\tEver="+bestFitnessEver;
+	}
+	
 	/**
 	 * Replace the 'n' worst individuals of the population with the offsprings,
 	 * where 'n' is the number of offsprings
@@ -135,18 +141,18 @@ public class Population {
 			throw new PopulationException("The number of offsprings should be grater than zero");
 		} else if (offsprings.size() == 1) {
 			// steady state
-			Log.info("Worst individual replaced");
+			Log.debug("Worst individual ("+worstPosition+") replaced");
 			population.set(worstPosition, offsprings.get(0));
 		} else if (offsprings.size() == populationSize - 1) {
 			// elite
 			offsprings.add(population.get(bestPosition));
-			Log.info("Best individual added to the offsprings population");
+			Log.debug("Best individual added to the offsprings population");
 			offsprings.toArray(popArray);
 			population = Arrays.asList(popArray);
 		} else if (offsprings.size() > populationSize) {
 			throw new PopulationException("The number of offsprings shoul not be greater than the population size");
 		} else if (offsprings.size() == populationSize) {
-			Log.info("All population replaced");
+			Log.debug("All population replaced");
 			offsprings.toArray(popArray);
 			population = Arrays.asList(popArray);
 		} else {
@@ -156,7 +162,7 @@ public class Population {
 			for (int i = n; i < populationSize; i++) {				
 				population.set(i, offsprings.get(i - n));
 			}
-			Log.info("Replace "+n+" individuals");			
+			Log.debug("Replace "+n+" individuals");			
 		}
 		
 		// update population statistics

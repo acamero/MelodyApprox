@@ -73,7 +73,7 @@ public class PitchContour implements Serializable {
 		}
 		contour.put(time, SILENCE);
 	}
-
+	
 	public Map<Double, Double> getContour() {
 		return contour;
 	}

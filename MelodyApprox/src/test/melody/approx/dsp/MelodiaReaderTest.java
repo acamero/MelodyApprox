@@ -2,7 +2,9 @@ package test.melody.approx.dsp;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map.Entry;
@@ -119,60 +121,85 @@ public class MelodiaReaderTest {
 	}
 
 	@Test
-	public void correctReadNotConvert() throws MelodiaReaderException, PitchContourException {
-		PitchContour pc = mReader.readMelodiaTest(correct, false);
+	public void correctReadNotConvert() throws MelodiaReaderException, PitchContourException, IOException {
+		FileReader fr = new FileReader(correct);
+		BufferedReader br = new BufferedReader(fr);
+		PitchContour pc = mReader.readMelodiaTest(br, false);
 		for (Entry<Double, Double> s : correctNotConvert.getContour().entrySet()) {
 			assertEquals(pc.getContour().get(s.getKey()), s.getValue(), 0.001d);
 		}
+		br.close();
 	}
 
 	@Test
-	public void correctReadConvert() throws MelodiaReaderException, PitchContourException {
-		PitchContour pc = mReader.readMelodiaTest(correct, true);
+	public void correctReadConvert() throws MelodiaReaderException, PitchContourException, IOException {
+		FileReader fr = new FileReader(correct);
+		BufferedReader br = new BufferedReader(fr);
+		PitchContour pc = mReader.readMelodiaTest(br, true);
 		for (Entry<Double, Double> s : correctConvert.getContour().entrySet()) {
 			assertEquals(pc.getContour().get(s.getKey()), s.getValue(), 0.001d);
 		}
+		br.close();
 	}
 
 	@Test(expected = MelodiaReaderException.class)
-	public void incorrectSeparatorNotConvert() throws MelodiaReaderException, PitchContourException {
-		mReader.readMelodiaTest(incorrectSeparator, false);
+	public void incorrectSeparatorNotConvert() throws MelodiaReaderException, PitchContourException, IOException {
+		FileReader fr = new FileReader(incorrectSeparator);
+		BufferedReader br = new BufferedReader(fr);
+		mReader.readMelodiaTest(br, false);
+		br.close();
 	}
 
 	@Test(expected = MelodiaReaderException.class)
-	public void incorrectSeparatorConvert() throws MelodiaReaderException, PitchContourException {
-		mReader.readMelodiaTest(incorrectSeparator, true);
+	public void incorrectSeparatorConvert() throws MelodiaReaderException, PitchContourException, IOException {
+		FileReader fr = new FileReader(incorrectSeparator);
+		BufferedReader br = new BufferedReader(fr);
+		mReader.readMelodiaTest(br, true);
+		br.close();
 	}
 
 	@Test(expected = MelodiaReaderException.class)
-	public void incorrectNumberNotConvert() throws MelodiaReaderException, PitchContourException {
-		mReader.readMelodiaTest(incorrectNumber, false);
+	public void incorrectNumberNotConvert() throws MelodiaReaderException, PitchContourException, IOException {
+		FileReader fr = new FileReader(incorrectNumber);
+		BufferedReader br = new BufferedReader(fr);
+		mReader.readMelodiaTest(br, false);
+		br.close();
 	}
 
 	@Test(expected = MelodiaReaderException.class)
-	public void incorrectNumberConvert() throws MelodiaReaderException, PitchContourException {
-		mReader.readMelodiaTest(incorrectNumber, true);
+	public void incorrectNumberConvert() throws MelodiaReaderException, PitchContourException, IOException {
+		FileReader fr = new FileReader(incorrectNumber);
+		BufferedReader br = new BufferedReader(fr);
+		mReader.readMelodiaTest(br, true);
+		br.close();
 	}
 
 	@Test(expected = PitchContourException.class)
-	public void incorrectOffsetNotConvert() throws MelodiaReaderException, PitchContourException {
-		mReader.readMelodiaTest(incorrectOffset, false);
+	public void incorrectOffsetNotConvert() throws MelodiaReaderException, PitchContourException, IOException {
+		FileReader fr = new FileReader(incorrectOffset);
+		BufferedReader br = new BufferedReader(fr);
+		mReader.readMelodiaTest(br, false);
+		br.close();
 	}
 
 	@Test(expected = PitchContourException.class)
-	public void incorrectOffsetConvert() throws MelodiaReaderException, PitchContourException {
-		mReader.readMelodiaTest(incorrectOffset, true);
+	public void incorrectOffsetConvert() throws MelodiaReaderException, PitchContourException, IOException {
+		FileReader fr = new FileReader(incorrectOffset);
+		BufferedReader br = new BufferedReader(fr);
+		mReader.readMelodiaTest(br, true);
+		br.close();
 	}
 
 	protected static class MelodiaReaderTestImpl extends MelodiaReader {
 
-		public PitchContour readMelodiaTest(String filePath, boolean convertNegative)
+		public PitchContour readMelodiaTest(BufferedReader bufferedReader, boolean convertNegative)
 				throws MelodiaReaderException, PitchContourException {
-			return readMelodia(filePath, convertNegative);
+			return readMelodia(bufferedReader, convertNegative);
 		}
 
 		@Override
-		public Melody getMelody(String filePath) throws MelodiaReaderException, PitchContourException, MelodyException {
+		public Melody getMelody(BufferedReader bufferedReader)
+				throws MelodiaReaderException, PitchContourException, MelodyException {
 			return null;
 		}
 
