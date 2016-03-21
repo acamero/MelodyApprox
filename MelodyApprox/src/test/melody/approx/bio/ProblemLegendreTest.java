@@ -123,4 +123,9 @@ public class ProblemLegendreTest {
 		individual = new Individual(7);
 		problem.getFitness(individual);
 	}
+	
+	@Test(expected = ProblemException.class)
+	public void nullIndividual() throws  ProblemException {
+		problem.getFitness(null);
+	}
 }

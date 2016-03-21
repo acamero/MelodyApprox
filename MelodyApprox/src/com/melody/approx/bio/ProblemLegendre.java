@@ -18,11 +18,15 @@ public class ProblemLegendre extends Problem {
 
 	@Override
 	public double getFitness(Individual individual) throws ProblemException {
+		if(individual==null) {
+			throw new ProblemException("Null individual");
+		}
+		
 		double fitness = 0.0d;
 
 		for (Entry<Double, Double> c : contour.getContour().entrySet()) {
 			// offset, pitch
-			// Log.info("Processing note (" + c.getKey() + "," + c.getValue() + ")");
+			// Log.debug("Processing note (" + c.getKey() + "," + c.getValue() + ")");
 			double note = 0.0d;
 			for (int i = 0; i < individual.getNumberOfGenes(); i++) {
 				note += individual.getChromosome().getGene(i) * legendrePoly(c.getKey(), i);

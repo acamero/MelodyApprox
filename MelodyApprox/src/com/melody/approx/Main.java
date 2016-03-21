@@ -46,8 +46,12 @@ import com.melody.approx.util.Utils;
  */
 public class Main {
 
+	// name of the program (to show in help menu)
 	private static final String PROGRAM_NAME = "java -jar melody.jar";
-
+	// constant to be used as a non-assigned value
+	private static final double NON_ASSIGNED_DOUBLE = -1.0d;
+	private static final int NON_ASSIGNED_INT = -1;
+	
 	private static enum ParseMelodia {
 		DEFAULT, SILENCE_CHOPPER
 	}
@@ -121,6 +125,24 @@ public class Main {
 		// select the seed to be used in the pseudo-random number generation
 		options.addOption(
 				Option.builder().longOpt("seed").hasArg().desc("set the number of the seed to be used").build());
+		// crossover probability
+		options.addOption(
+				Option.builder().longOpt("crossover-prob").hasArg().desc("set the crossover probability").build());
+		// mutation probability
+		options.addOption(
+				Option.builder().longOpt("mutation-prob").hasArg().desc("set the mutation probability").build());
+		// maximum number of evaluations
+		options.addOption(
+				Option.builder().longOpt("max-evals").hasArg().desc("set the maximum number of evaluations").build());
+		// population size
+		options.addOption(
+				Option.builder().longOpt("pop-size").hasArg().desc("set the size of the population").build());
+		// number of offsprings
+		options.addOption(
+				Option.builder().longOpt("offsprings").hasArg().desc("set the number of offsprings per generation").build());
+
+
+
 
 		return options;
 	}
@@ -135,6 +157,11 @@ public class Main {
 		String outDirectory = "./";
 		boolean isMidi = false;
 		boolean isConsole = false;
+		double crossoverProb = NON_ASSIGNED_DOUBLE;
+		double mutationProb = NON_ASSIGNED_DOUBLE;
+		int popSize = NON_ASSIGNED_INT;
+		int offsprings = NON_ASSIGNED_INT;
+		int maxEvals = NON_ASSIGNED_INT;
 
 		try {
 			// parse the command line arguments
@@ -216,11 +243,36 @@ public class Main {
 				String seedLine = line.getOptionValue("seed");
 				Log.info("Seed number argument parsed (seed '" + seedLine + "' selected)");
 				int seed = Integer.valueOf(seedLine);
-				RandomGenerator.setSeed(seed);				
+				RandomGenerator.setSeed(seed);
 			}
-
+			
+			if (line.hasOption("crossover-prob")) {
+				crossoverProb = Double.valueOf(line.getOptionValue("crossover-prob"));
+				Log.info("Crossover probability set to "+ crossoverProb);				
+			}
+			
+			if (line.hasOption("mutation-prob")) {
+				mutationProb = Double.valueOf(line.getOptionValue("mutation-prob"));
+				Log.info("Mutation probability set to "+mutationProb);				
+			}
+			
+			if (line.hasOption("pop-size")) {
+				popSize = Integer.valueOf(line.getOptionValue("pop-size"));
+				Log.info("Population size set to "+popSize);				
+			}
+			
+			if (line.hasOption("offsprings")) {
+				offsprings = Integer.valueOf(line.getOptionValue("offsprings"));
+				Log.info("Mutation probability set to "+offsprings);				
+			}
+			
+			if (line.hasOption("max-evals")) {
+				maxEvals = Integer.valueOf(line.getOptionValue("max-evals"));
+				Log.info("Maximum number of evaluations set to "+maxEvals);				
+			}
+			
 		} catch (ParseException exp) {
-			System.out.println("Unexpected exception:" + exp.getMessage());
+			Log.error("Unexpected exception:" + exp.getMessage());
 		}
 
 		Melody melody = null;
@@ -277,9 +329,26 @@ public class Main {
 
 			try {
 				MelodyProcessor processor = new MelodyProcessor(algorithm, melody);
+				// set the parameters of this run (if applies)
+				if(	crossoverProb != NON_ASSIGNED_DOUBLE ){
+					processor.setCrossoverProb(crossoverProb);
+				}
+				if( mutationProb != NON_ASSIGNED_DOUBLE) {
+					processor.setMutationProb(mutationProb);
+				}
+				if( popSize != NON_ASSIGNED_INT){
+					processor.setPopSize(popSize);
+				}
+				if( offsprings != NON_ASSIGNED_INT){
+					processor.setOffspringSize(offsprings);
+				}
+				if( maxEvals != NON_ASSIGNED_INT) {
+					processor.setMaxEvaluations(maxEvals);
+				}
+				
 				String prepend;
 				if (filePath.contains("/")) {
-					prepend = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length()) +";";
+					prepend = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length()) + ";";
 				} else {
 					prepend = filePath + ";";
 				}
