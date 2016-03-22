@@ -9,25 +9,22 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.melody.approx.bio.Individual;
-import com.melody.approx.bio.LegendreMutation;
 import com.melody.approx.bio.MutationInterface.MutationException;
-import com.melody.approx.util.Log;
-import com.melody.approx.util.Log.LogLevel;
+import com.melody.approx.bio.PolyTriMutation;
 
 /**
  * 
  * @author Andrés Camero Unzueta
  *
  */
-public class LegendreMutationTest {
+public class PolyTriMutationTest {
 
-	private LegendreMutation mut;
+	private PolyTriMutation mut;
 	private Individual ind;
 	private String original;
-
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Log.setLogLevel(LogLevel.INFO);
 	}
 
 	@AfterClass
@@ -36,7 +33,7 @@ public class LegendreMutationTest {
 
 	@Before
 	public void setUp() throws Exception {
-		mut = new LegendreMutation(1.0d);
+		mut = new PolyTriMutation(1.0d);
 		ind = new Individual(10);
 		original = ind.toString();
 	}

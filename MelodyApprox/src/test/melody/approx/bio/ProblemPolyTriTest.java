@@ -15,6 +15,11 @@ import com.melody.approx.bio.ProblemPolyTri;
 import com.melody.approx.pitch.PitchContour;
 import com.melody.approx.pitch.PitchContour.ContourType;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class ProblemPolyTriTest {
 	
 	private PitchContour pc ;

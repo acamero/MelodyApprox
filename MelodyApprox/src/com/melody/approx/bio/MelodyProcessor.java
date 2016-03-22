@@ -91,6 +91,7 @@ public class MelodyProcessor {
 			fitness += individual.getFitness();
 
 			partialWriter.write(prepend);
+			partialWriter.write(algorithmType.toString()+";");
 			partialWriter.write(e.getKey() + ";");
 			partialWriter.write(initTime + ";");
 			partialWriter.write(endTime + ";");
@@ -103,6 +104,7 @@ public class MelodyProcessor {
 		long finishTime = System.currentTimeMillis();
 
 		finalWriter.write(prepend);
+		finalWriter.write(algorithmType.toString()+";");;
 		finalWriter.write(startTime + ";");
 		finalWriter.write(finishTime + ";");
 		finalWriter.write(fitness+"");
@@ -131,6 +133,10 @@ public class MelodyProcessor {
 			individualInit = new LegendreInit(mean, stdDev);
 			break;
 		case POLYTRI:
+			mutationInterface = new PolyTriMutation(stdDev);
+			int cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
+			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 32.0d);
+			individualInit = new PolyTriInit(mean, stdDev);
 			break;
 		}
 

@@ -2,9 +2,13 @@ package com.melody.approx.bio;
 
 import java.util.Map.Entry;
 
-import com.melody.approx.bio.Problem.ProblemException;
 import com.melody.approx.pitch.PitchContour;
 
+/**
+ * 
+ * @author Andrés Camero Unzueta
+ *
+ */
 public class ProblemPolyTri extends Problem {
 
 	private int sinOffset;	

@@ -271,8 +271,10 @@ public class Main {
 				Log.info("Maximum number of evaluations set to "+maxEvals);				
 			}
 			
-		} catch (ParseException exp) {
-			Log.error("Unexpected exception:" + exp.getMessage());
+		} catch (ParseException e) {
+			Log.error("Unexpected exception:" + e.getMessage());
+			Utils.exceptionToLog(e);
+			return;
 		}
 
 		Melody melody = null;
@@ -316,6 +318,7 @@ public class Main {
 					melody = (Melody) Utils.deserialize(filePath);
 					if (isMidi && !melody.getContourType().equals(ContourType.MIDI)) {
 						melody = Melody.transform(melody, ContourType.MIDI);
+						Log.info("Melody transformed into MIDI encode");
 					}
 				} catch (ClassNotFoundException | IOException e) {
 					Log.error("Unable to deserialize the melody from the given file");
@@ -323,6 +326,7 @@ public class Main {
 					return;
 				} catch (PitchContourException | MelodyException e) {
 					Log.error("Unable to continue processing");
+					Utils.exceptionToLog(e);
 					return;
 				}
 			} // otherwise use the melody already parsed
@@ -332,18 +336,23 @@ public class Main {
 				// set the parameters of this run (if applies)
 				if(	crossoverProb != NON_ASSIGNED_DOUBLE ){
 					processor.setCrossoverProb(crossoverProb);
+					Log.debug("Crossover probability assigned");
 				}
 				if( mutationProb != NON_ASSIGNED_DOUBLE) {
 					processor.setMutationProb(mutationProb);
+					Log.debug("Mutation probability assigned");
 				}
 				if( popSize != NON_ASSIGNED_INT){
 					processor.setPopSize(popSize);
+					Log.debug("Population size assigned");
 				}
 				if( offsprings != NON_ASSIGNED_INT){
 					processor.setOffspringSize(offsprings);
+					Log.debug("Offsprings size assigned");
 				}
 				if( maxEvals != NON_ASSIGNED_INT) {
 					processor.setMaxEvaluations(maxEvals);
+					Log.debug("Maximum evaluations assigned");
 				}
 				
 				String prepend;
@@ -372,7 +381,7 @@ public class Main {
 					partialWriter = new BufferedWriter(fw);
 					if (init) {
 						// write a header to the file
-						partialWriter.write("file;offset;startTime;endTime;fitness;evaluations;points;solution\n");
+						partialWriter.write("file;algorithm;offset;startTime;endTime;fitness;evaluations;points;solution\n");
 						partialWriter.flush();
 					}
 
@@ -390,7 +399,7 @@ public class Main {
 
 					if (init) {
 						// write a header to the file
-						finalWriter.write("file;startTime;endTime;fitness\n");
+						finalWriter.write("file;algorithm;startTime;endTime;fitness\n");
 						finalWriter.flush();
 					}
 				}
@@ -402,10 +411,12 @@ public class Main {
 
 			} catch (MelodyProcessorException e) {
 				Log.error("Unable to setup MelodyProcessor");
+				Utils.exceptionToLog(e);
 				return;
 			} catch (ProblemException | AlgorithmException | PopulationException | ChromosomeException
 					| IndividualInitInterfaceException | CrossoverException | MutationException e) {
 				Log.error("Unable to process melody");
+				Utils.exceptionToLog(e);
 				return;
 			} catch (IOException e) {
 				Log.error("Unable to open or write to the output buffer");
