@@ -24,19 +24,21 @@ public class PolyTriInit implements IndividualInitInterface {
 	public Individual nextIndividual(int numberOfGenes)
 			throws ChromosomeException, IndividualInitInterfaceException, ProblemException {
 		
-		if(numberOfGenes < 2) {
-			throw new IndividualInitInterfaceException("Number of genes should be greater than 2");
+		if(numberOfGenes < ProblemPolyTri.BASE_CONSTANTS) {
+			throw new IndividualInitInterfaceException("Number of genes should be greater than "+ProblemPolyTri.BASE_CONSTANTS);
 		}
 		
 		Individual individual = new Individual(numberOfGenes);
 		
+		// constant
+		individual.getChromosome().setGene(0, RandomGenerator.nextGaussian(stdDev, mean));
 		// alpha
-		individual.getChromosome().setGene(0, RandomGenerator.nextGaussian());
+		individual.getChromosome().setGene(1, RandomGenerator.nextGaussian(stdDev, 0.0d));
 		// beta
-		individual.getChromosome().setGene(1, RandomGenerator.nextGaussian());
+		individual.getChromosome().setGene(2, RandomGenerator.nextGaussian());
 		
-		for (int i = 2; i < numberOfGenes; i++) {
-			individual.getChromosome().setGene(i, RandomGenerator.nextGaussian(stdDev, mean));
+		for (int i = 3; i < numberOfGenes; i++) {
+			individual.getChromosome().setGene(i, RandomGenerator.nextGaussian(stdDev, 0.0d));
 		}
 
 		Log.debug("New individual: "+individual.toString());

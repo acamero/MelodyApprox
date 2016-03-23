@@ -10,7 +10,7 @@ import com.melody.approx.pitch.PitchContour;
  *
  */
 public class ProblemPolyTri extends Problem {
-
+	public static final int BASE_CONSTANTS=3;
 	private int sinOffset;	
 	private int numberOfGenes;
 	private double omega;
@@ -25,9 +25,9 @@ public class ProblemPolyTri extends Problem {
 			throw new ProblemException("Interpolation frequency should be greater than zero");
 		}
 		
-		this.numberOfGenes = numberCos + numberSin + 2;
+		this.numberOfGenes = numberCos + numberSin + BASE_CONSTANTS;
 		this.omega = omega;
-		this.sinOffset = 2+numberSin;		
+		this.sinOffset = BASE_CONSTANTS+numberSin;		
 	}
 
 	@Override
@@ -47,12 +47,14 @@ public class ProblemPolyTri extends Problem {
 			// Log.debug("Processing note (" + c.getKey() + "," + c.getValue() + ")");
 			double note = 0.0d;
 			
+			//constant
+			note += individual.getChromosome().getGene(0);
 			// alpha
-			note += individual.getChromosome().getGene(0) * c.getKey();
+			note += individual.getChromosome().getGene(1) * c.getKey();
 			// beta
-			note += individual.getChromosome().getGene(1) * c.getKey() * c.getKey();
+			note += individual.getChromosome().getGene(2) * c.getKey() * c.getKey();
 			
-			for (int i = 2; i < sinOffset; i++) {
+			for (int i = BASE_CONSTANTS; i < sinOffset; i++) {
 				note += individual.getChromosome().getGene(i) * Math.sin( i * omega * c.getKey());
 			}
 			

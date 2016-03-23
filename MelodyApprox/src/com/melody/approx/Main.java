@@ -51,7 +51,7 @@ public class Main {
 	// constant to be used as a non-assigned value
 	private static final double NON_ASSIGNED_DOUBLE = -1.0d;
 	private static final int NON_ASSIGNED_INT = -1;
-	
+
 	private static enum ParseMelodia {
 		DEFAULT, SILENCE_CHOPPER
 	}
@@ -135,14 +135,10 @@ public class Main {
 		options.addOption(
 				Option.builder().longOpt("max-evals").hasArg().desc("set the maximum number of evaluations").build());
 		// population size
-		options.addOption(
-				Option.builder().longOpt("pop-size").hasArg().desc("set the size of the population").build());
+		options.addOption(Option.builder().longOpt("pop-size").hasArg().desc("set the size of the population").build());
 		// number of offsprings
-		options.addOption(
-				Option.builder().longOpt("offsprings").hasArg().desc("set the number of offsprings per generation").build());
-
-
-
+		options.addOption(Option.builder().longOpt("offsprings").hasArg()
+				.desc("set the number of offsprings per generation").build());
 
 		return options;
 	}
@@ -245,32 +241,32 @@ public class Main {
 				int seed = Integer.valueOf(seedLine);
 				RandomGenerator.setSeed(seed);
 			}
-			
+
 			if (line.hasOption("crossover-prob")) {
 				crossoverProb = Double.valueOf(line.getOptionValue("crossover-prob"));
-				Log.info("Crossover probability set to "+ crossoverProb);				
+				Log.info("Crossover probability set to " + crossoverProb);
 			}
-			
+
 			if (line.hasOption("mutation-prob")) {
 				mutationProb = Double.valueOf(line.getOptionValue("mutation-prob"));
-				Log.info("Mutation probability set to "+mutationProb);				
+				Log.info("Mutation probability set to " + mutationProb);
 			}
-			
+
 			if (line.hasOption("pop-size")) {
 				popSize = Integer.valueOf(line.getOptionValue("pop-size"));
-				Log.info("Population size set to "+popSize);				
+				Log.info("Population size set to " + popSize);
 			}
-			
+
 			if (line.hasOption("offsprings")) {
 				offsprings = Integer.valueOf(line.getOptionValue("offsprings"));
-				Log.info("Mutation probability set to "+offsprings);				
+				Log.info("Mutation probability set to " + offsprings);
 			}
-			
+
 			if (line.hasOption("max-evals")) {
 				maxEvals = Integer.valueOf(line.getOptionValue("max-evals"));
-				Log.info("Maximum number of evaluations set to "+maxEvals);				
+				Log.info("Maximum number of evaluations set to " + maxEvals);
 			}
-			
+
 		} catch (ParseException e) {
 			Log.error("Unexpected exception:" + e.getMessage());
 			Utils.exceptionToLog(e);
@@ -334,33 +330,34 @@ public class Main {
 			try {
 				MelodyProcessor processor = new MelodyProcessor(algorithm, melody);
 				// set the parameters of this run (if applies)
-				if(	crossoverProb != NON_ASSIGNED_DOUBLE ){
+				if (crossoverProb != NON_ASSIGNED_DOUBLE) {
 					processor.setCrossoverProb(crossoverProb);
 					Log.debug("Crossover probability assigned");
 				}
-				if( mutationProb != NON_ASSIGNED_DOUBLE) {
+				if (mutationProb != NON_ASSIGNED_DOUBLE) {
 					processor.setMutationProb(mutationProb);
 					Log.debug("Mutation probability assigned");
 				}
-				if( popSize != NON_ASSIGNED_INT){
+				if (popSize != NON_ASSIGNED_INT) {
 					processor.setPopSize(popSize);
 					Log.debug("Population size assigned");
 				}
-				if( offsprings != NON_ASSIGNED_INT){
+				if (offsprings != NON_ASSIGNED_INT) {
 					processor.setOffspringSize(offsprings);
 					Log.debug("Offsprings size assigned");
 				}
-				if( maxEvals != NON_ASSIGNED_INT) {
+				if (maxEvals != NON_ASSIGNED_INT) {
 					processor.setMaxEvaluations(maxEvals);
 					Log.debug("Maximum evaluations assigned");
 				}
-				
+
 				String prepend;
 				if (filePath.contains("/")) {
 					prepend = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length()) + ";";
 				} else {
 					prepend = filePath + ";";
 				}
+				prepend = prepend + RandomGenerator.getActualSeedPosition() + ";";
 				BufferedWriter partialWriter = null;
 				BufferedWriter finalWriter = null;
 
@@ -381,7 +378,8 @@ public class Main {
 					partialWriter = new BufferedWriter(fw);
 					if (init) {
 						// write a header to the file
-						partialWriter.write("file;algorithm;offset;startTime;endTime;fitness;evaluations;points;solution\n");
+						partialWriter.write(
+								"file;seed;algorithm;offset;startTime;endTime;fitness;evaluations;points;solution\n");
 						partialWriter.flush();
 					}
 
@@ -399,7 +397,7 @@ public class Main {
 
 					if (init) {
 						// write a header to the file
-						finalWriter.write("file;algorithm;startTime;endTime;fitness\n");
+						finalWriter.write("file;seed;algorithm;startTime;endTime;fitness\n");
 						finalWriter.flush();
 					}
 				}

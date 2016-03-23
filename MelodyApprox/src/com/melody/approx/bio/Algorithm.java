@@ -52,7 +52,7 @@ public class Algorithm {
 			throw new AlgorithmException("Mutation interface should not be null");
 		}
 
-		if (offspringSize < 1 || offspringSize >= population.getPopulationSize()) {
+		if (offspringSize < 1 || offspringSize > population.getPopulationSize()) {
 			Log.error("Invalid offspring size");
 			throw new AlgorithmException("Invalid offspring size");
 		}

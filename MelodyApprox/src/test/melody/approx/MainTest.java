@@ -76,12 +76,12 @@ public class MainTest {
 	
 	@Test 
 	public void fullProcess() {
-		Log.setLogLevel(LogLevel.DEBUG);
+		Log.setLogLevel(LogLevel.INFO);
 		String[] args = new String[6];
 		args[0] = "--file-name=test/london-bridge-melodia.csv";
 		args[1] = "--parse-melodia=SILENCE_CHOPPER";
 		args[2] = "--out-dir=test";
-		args[3] = "--algorithm=POLYTRI";
+		args[3] = "--algorithm=MEAN";
 		args[4] = "--pitch-midi";
 		args[5] = "--seed=2";
 		

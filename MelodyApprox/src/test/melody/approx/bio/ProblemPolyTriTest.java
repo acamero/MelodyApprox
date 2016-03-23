@@ -36,7 +36,7 @@ public class ProblemPolyTriTest {
 	public void setUp() throws Exception {
 		pc = new PitchContour(ContourType.MIDI);
 		pc.appendMidi(1.0d, 69);
-		pc.appendMidi(2.0d, 69*2);
+		pc.appendMidi(2.0d, 69);
 	}
 
 	@After
@@ -77,20 +77,30 @@ public class ProblemPolyTriTest {
 	}
 	
 	@Test
-	public void linearFitness() throws ProblemException, ChromosomeException {
+	public void constantFitness() throws ProblemException, ChromosomeException {
 		ProblemPolyTri problem = new ProblemPolyTri(pc, 1, 1, 1.0d);
-		Individual ind = new Individual(4);
+		Individual ind = new Individual(5);
 		ind.getChromosome().setGene(0, 69.0d);
 		ind.setFitness(problem.getFitness(ind));
 		assertEquals(0.0d, ind.getFitness(),0.0d);
 	}
 	
 	@Test
-	public void quadFitness() throws ProblemException, ChromosomeException {
+	public void linearFitness() throws ProblemException, ChromosomeException {
 		ProblemPolyTri problem = new ProblemPolyTri(pc, 1, 1, 1.0d);
-		Individual ind = new Individual(4);
+		Individual ind = new Individual(5);
 		ind.getChromosome().setGene(0, 69.0d);
 		ind.getChromosome().setGene(1, 1.0d);
+		ind.setFitness(problem.getFitness(ind));
+		assertEquals(5.0d, ind.getFitness(),0.0d);
+	}
+	
+	@Test
+	public void quadFitness() throws ProblemException, ChromosomeException {
+		ProblemPolyTri problem = new ProblemPolyTri(pc, 1, 1, 1.0d);
+		Individual ind = new Individual(5);
+		ind.getChromosome().setGene(0, 69.0d);
+		ind.getChromosome().setGene(2, 1.0d);
 		ind.setFitness(problem.getFitness(ind));
 		assertEquals(17.0d, ind.getFitness(),0.0d);
 	}

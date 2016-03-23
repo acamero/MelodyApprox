@@ -23,7 +23,7 @@ import com.melody.approx.util.Log;
 public class MelodyProcessor {
 
 	public enum AlgorithmType {
-		LEGENDRE3(4), LEGENDRE5(6), POLYTRI(8);
+		LEGENDRE3(4), LEGENDRE5(6), POLYTRI_331(9), POLYTRI_332(9), POLYTRI_222(7), MEAN(1);
 
 		private int numberOfGenes;
 
@@ -132,11 +132,33 @@ public class MelodyProcessor {
 			fitnessCalc = new ProblemLegendre(contour);
 			individualInit = new LegendreInit(mean, stdDev);
 			break;
-		case POLYTRI:
+		case POLYTRI_331:
 			mutationInterface = new PolyTriMutation(stdDev);
 			int cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
-			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 32.0d);
+			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 1.0d);
 			individualInit = new PolyTriInit(mean, stdDev);
+			break;
+		case POLYTRI_332:
+			mutationInterface = new PolyTriMutation(stdDev);
+			cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
+			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 2.0d);
+			individualInit = new PolyTriInit(mean, stdDev);
+			break;
+		case POLYTRI_222:
+			mutationInterface = new PolyTriMutation(stdDev);
+			cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
+			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 2.0d);
+			individualInit = new PolyTriInit(mean, stdDev);
+			break;
+		case MEAN:
+			mutationInterface = new LegendreMutation(stdDev);
+			individualInit = new LegendreInit(mean, stdDev);
+			fitnessCalc = new ProblemMean(contour, mean);
+			popSize = 1;
+			maxEvaluations = 1;
+			offspringSize = 1;
+			crossoverProb = 0.0d;
+			mutationProb = 0.0d;
 			break;
 		}
 
