@@ -10,11 +10,11 @@
 require 'optparse'
 require 'ostruct'
 
-def parseDirectory( inDir, outDir, plugin) 
+def parseDirectory( inDir, outDir, jar, algorithm, num) 
 	# create out directory if not exists
 	Dir.mkdir(outDir) unless File.exists?(outDir)
 	outDir = File.absolute_path(outDir);
-		
+	
 	# validate that in directory exists
 	if File.directory?(inDir)	
 		# get folders
@@ -28,8 +28,10 @@ def parseDirectory( inDir, outDir, plugin)
 			# check if it is a file
 			dirs.each do |inFile|			
 				if File.file?(inFile) 
-					#puts 'sonic-annotator -t '+plugin+' '+ inFile +' -w csv --csv-basedir ' + outDir
-					system('sonic-annotator -t '+plugin+' '+ inFile +' -w csv --csv-basedir ' + outDir)
+					for i in 1..num
+						puts 'java -jar '+jar+' --file-name '+ inFile +' --pitch-midi --algorithm ' + algorithm + ' --out-dir ' + outDir + " --seed #{i}" 
+						system('java -jar '+jar+' --file-name '+ inFile +' --pitch-midi --algorithm ' + algorithm + ' --out-dir ' + outDir + " --seed #{i}" )						
+					end
 				end
 			end
 		else	
@@ -47,14 +49,16 @@ if __FILE__ == $0
 	OptionParser.new do |opt|
 		opt.on('-d', '--in-dir IN_DIR', 'Directory containing music to parse') { |o| options.in_dir = o }
 		opt.on('-o', '--out-dir OUT_DIR', 'Directory to store pitch contours') { |o| options.out_dir = o }
-		opt.on('-p', '--vamp-plugin VAMP_PLUGIN', 'Location of the VAMP plugin to use') { |o| options.vamp_plugin = o }
+		opt.on('-a', '--algorithm ALGORITHM', 'Name of the algorithm to be used') { |o| options.algorithm = o }
+		opt.on('-j', '--jar JAR_PATH', 'Path of the jar') { |o| options.jar = o }
+		opt.on('-n', '--num-repetitions NUMBER', 'Number of repetitions') { |o| options.num = o }
 	end.parse!
 	
-	if !options.in_dir.nil?	&& !options.out_dir.nil? && !options.vamp_plugin.nil?
-		if File.file?(options.vamp_plugin) 
-			parseDirectory(options.in_dir, options.out_dir, File.absolute_path(options.vamp_plugin));
+	if !options.in_dir.nil?	&& !options.out_dir.nil? && !options.algorithm.nil? && !options.jar.nil? && !options.num.nil?
+		if File.file?(options.jar) || options.n < 1
+			parseDirectory(options.in_dir, options.out_dir, File.absolute_path(options.jar), options.algorithm, options.num.to_i);		
 		else
-			puts "Could not find vamp-plugin '#{options.vamp_plugin}'";
+			puts "Could not find jar '#{options.jar}'";
 		end
 	else
 		puts "use '-h' or '--help' for more information";

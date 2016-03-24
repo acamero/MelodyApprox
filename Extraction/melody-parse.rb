@@ -10,7 +10,7 @@
 require 'optparse'
 require 'ostruct'
 
-def parseDirectory( inDir, outDir, plugin) 
+def parseDirectory( inDir, outDir, jar, algorithm) 
 	# create out directory if not exists
 	Dir.mkdir(outDir) unless File.exists?(outDir)
 	outDir = File.absolute_path(outDir);
@@ -28,8 +28,8 @@ def parseDirectory( inDir, outDir, plugin)
 			# check if it is a file
 			dirs.each do |inFile|			
 				if File.file?(inFile) 
-					#puts 'sonic-annotator -t '+plugin+' '+ inFile +' -w csv --csv-basedir ' + outDir
-					system('sonic-annotator -t '+plugin+' '+ inFile +' -w csv --csv-basedir ' + outDir)
+					puts 'java -jar '+jar+' --file-name '+ inFile +' --pitch-midi --parse-melodia ' + algorithm + ' --out-dir ' + outDir
+					system('java -jar '+jar+' --file-name '+ inFile +' --pitch-midi --parse-melodia ' + algorithm + ' --out-dir ' + outDir)
 				end
 			end
 		else	
@@ -47,14 +47,15 @@ if __FILE__ == $0
 	OptionParser.new do |opt|
 		opt.on('-d', '--in-dir IN_DIR', 'Directory containing music to parse') { |o| options.in_dir = o }
 		opt.on('-o', '--out-dir OUT_DIR', 'Directory to store pitch contours') { |o| options.out_dir = o }
-		opt.on('-p', '--vamp-plugin VAMP_PLUGIN', 'Location of the VAMP plugin to use') { |o| options.vamp_plugin = o }
+		opt.on('-a', '--method PARSE_METHOD', 'Name of the method to parse melody') { |o| options.algorithm = o }
+		opt.on('-j', '--jar JAR_PATH', 'Path of the jar') { |o| options.jar = o }
 	end.parse!
 	
-	if !options.in_dir.nil?	&& !options.out_dir.nil? && !options.vamp_plugin.nil?
-		if File.file?(options.vamp_plugin) 
-			parseDirectory(options.in_dir, options.out_dir, File.absolute_path(options.vamp_plugin));
+	if !options.in_dir.nil?	&& !options.out_dir.nil? && !options.algorithm.nil? && !options.jar.nil?
+		if File.file?(options.jar) 
+			parseDirectory(options.in_dir, options.out_dir, File.absolute_path(options.jar), options.algorithm);		
 		else
-			puts "Could not find vamp-plugin '#{options.vamp_plugin}'";
+			puts "Could not find jar '#{options.jar}'";
 		end
 	else
 		puts "use '-h' or '--help' for more information";
