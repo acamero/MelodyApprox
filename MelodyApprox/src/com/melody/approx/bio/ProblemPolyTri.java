@@ -55,11 +55,13 @@ public class ProblemPolyTri extends Problem {
 			note += individual.getChromosome().getGene(2) * c.getKey() * c.getKey();
 			
 			for (int i = BASE_CONSTANTS; i < sinOffset; i++) {
-				note += individual.getChromosome().getGene(i) * Math.sin( i * omega * c.getKey());
+				double j = (double)i + 1.0d;
+				note += individual.getChromosome().getGene(i) * Math.sin( j * omega * c.getKey());
 			}
 			
 			for (int i = sinOffset; i < numberOfGenes; i++) {
-				note += individual.getChromosome().getGene(i) * Math.cos( i * omega * c.getKey());
+				double j = (double)i + 1.0d;
+				note += individual.getChromosome().getGene(i) * Math.cos( j * omega * c.getKey());
 			}
 			
 			fitness += Math.pow(note - c.getValue(), 2.0d);

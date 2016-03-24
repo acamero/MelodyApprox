@@ -23,7 +23,8 @@ import com.melody.approx.util.Log;
 public class MelodyProcessor {
 
 	public enum AlgorithmType {
-		LEGENDRE3(4), LEGENDRE5(6), POLYTRI_331(9), POLYTRI_332(9), POLYTRI_222(7), MEAN(1);
+		LEGENDRE3(4), LEGENDRE5(6), POLYTRI_331(9), POLYTRI_332(9), POLYTRI_222(7), MEAN(1), POLYTRI_333(
+				9), POLYTRI_443(11), POLYTRI_442(11);
 
 		private int numberOfGenes;
 
@@ -87,11 +88,11 @@ public class MelodyProcessor {
 			individual = algorithm.startAlgorithm();
 			long endTime = System.currentTimeMillis();
 			Log.info("End time(" + e.getKey() + "): " + endTime);
-			Log.info("Offset"+e.getKey()+ "\t"+ algorithm.statsToString());
+			Log.info("Offset" + e.getKey() + "\t" + algorithm.statsToString());
 			fitness += individual.getFitness();
 
 			partialWriter.write(prepend);
-			partialWriter.write(algorithmType.toString()+";");
+			partialWriter.write(algorithmType.toString() + ";");
 			partialWriter.write(e.getKey() + ";");
 			partialWriter.write(initTime + ";");
 			partialWriter.write(endTime + ";");
@@ -104,10 +105,11 @@ public class MelodyProcessor {
 		long finishTime = System.currentTimeMillis();
 
 		finalWriter.write(prepend);
-		finalWriter.write(algorithmType.toString()+";");;
+		finalWriter.write(algorithmType.toString() + ";");
+		;
 		finalWriter.write(startTime + ";");
 		finalWriter.write(finishTime + ";");
-		finalWriter.write(fitness+"");
+		finalWriter.write(fitness + "");
 		finalWriter.write("\n");
 
 		Log.info("Start time=" + startTime + "\tFinish time=" + finishTime + "\tTotal fitness=" + fitness);
@@ -127,28 +129,53 @@ public class MelodyProcessor {
 
 		switch (this.algorithmType) {
 		case LEGENDRE3:
+			mutationProb = 1.0d / 4.0d;
 		case LEGENDRE5:
 			mutationInterface = new LegendreMutation(stdDev);
 			fitnessCalc = new ProblemLegendre(contour);
 			individualInit = new LegendreInit(mean, stdDev);
+			mutationProb = 1.0d / 6.0d;
 			break;
 		case POLYTRI_331:
 			mutationInterface = new PolyTriMutation(stdDev);
 			int cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
 			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 1.0d);
 			individualInit = new PolyTriInit(mean, stdDev);
+			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
 		case POLYTRI_332:
 			mutationInterface = new PolyTriMutation(stdDev);
 			cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
 			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 2.0d);
 			individualInit = new PolyTriInit(mean, stdDev);
+			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
+		case POLYTRI_333:
+			mutationInterface = new PolyTriMutation(stdDev);
+			cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
+			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 3.0d);
+			individualInit = new PolyTriInit(mean, stdDev);
+			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 		case POLYTRI_222:
 			mutationInterface = new PolyTriMutation(stdDev);
 			cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
 			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 2.0d);
 			individualInit = new PolyTriInit(mean, stdDev);
+			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
+			break;
+		case POLYTRI_443:
+			mutationInterface = new PolyTriMutation(stdDev);
+			cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
+			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 3.0d);
+			individualInit = new PolyTriInit(mean, stdDev);
+			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
+			break;
+		case POLYTRI_442:
+			mutationInterface = new PolyTriMutation(stdDev);
+			cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
+			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 2.0d);
+			individualInit = new PolyTriInit(mean, stdDev);
+			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
 		case MEAN:
 			mutationInterface = new LegendreMutation(stdDev);
