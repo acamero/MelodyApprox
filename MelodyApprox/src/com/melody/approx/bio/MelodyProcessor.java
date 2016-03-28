@@ -138,41 +138,42 @@ public class MelodyProcessor {
 			break;
 		case POLYTRI_331:
 			mutationInterface = new PolyTriMutation(stdDev);
-			int cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
+			int cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
 			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 1.0d);
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
 		case POLYTRI_332:
 			mutationInterface = new PolyTriMutation(stdDev);
-			cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
+			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
 			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 2.0d);
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
 		case POLYTRI_333:
 			mutationInterface = new PolyTriMutation(stdDev);
-			cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
+			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
 			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 3.0d);
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
+			break;
 		case POLYTRI_222:
 			mutationInterface = new PolyTriMutation(stdDev);
-			cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
+			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
 			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 2.0d);
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
 		case POLYTRI_443:
 			mutationInterface = new PolyTriMutation(stdDev);
-			cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
+			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
 			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 3.0d);
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
 		case POLYTRI_442:
 			mutationInterface = new PolyTriMutation(stdDev);
-			cosSin = (algorithmType.getNumberOfGenes() - 2) / 2;
+			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
 			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 2.0d);
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();

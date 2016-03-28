@@ -3,6 +3,7 @@ package com.melody.approx.bio;
 import java.util.Map.Entry;
 
 import com.melody.approx.pitch.PitchContour;
+import com.melody.approx.util.Log;
 
 /**
  * 
@@ -27,7 +28,8 @@ public class ProblemPolyTri extends Problem {
 		
 		this.numberOfGenes = numberCos + numberSin + BASE_CONSTANTS;
 		this.omega = omega;
-		this.sinOffset = BASE_CONSTANTS+numberSin;		
+		this.sinOffset = BASE_CONSTANTS+numberSin;	
+		Log.debug("Sin offset: "+sinOffset);
 	}
 
 	@Override
@@ -55,16 +57,23 @@ public class ProblemPolyTri extends Problem {
 			note += individual.getChromosome().getGene(2) * c.getKey() * c.getKey();
 			
 			for (int i = BASE_CONSTANTS; i < sinOffset; i++) {
-				double j = (double)i + 1.0d;
-				note += individual.getChromosome().getGene(i) * Math.sin( j * omega * c.getKey());
+				double j = (double)i - (double)BASE_CONSTANTS + 1.0d;				
+				// angle in degrees
+				note += individual.getChromosome().getGene(i) * Math.sin( Math.toRadians(j * omega * c.getKey()));
+				// angle in radians
+				// note += individual.getChromosome().getGene(i) * Math.sin( j * omega * c.getKey());
 			}
 			
 			for (int i = sinOffset; i < numberOfGenes; i++) {
-				double j = (double)i + 1.0d;
-				note += individual.getChromosome().getGene(i) * Math.cos( j * omega * c.getKey());
+				double j = (double)i - (double)sinOffset + 1.0d;
+				// angle in degrees
+				note += individual.getChromosome().getGene(i) * Math.cos( Math.toRadians(j * omega * c.getKey()));
+				// angle in radians
+				// note += individual.getChromosome().getGene(i) * Math.cos( j * omega * c.getKey());
 			}
 			
 			fitness += Math.pow(note - c.getValue(), 2.0d);
+			
 		}
 
 		return fitness;

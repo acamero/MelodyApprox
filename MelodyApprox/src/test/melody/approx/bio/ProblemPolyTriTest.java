@@ -2,6 +2,10 @@ package test.melody.approx.bio;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -12,8 +16,16 @@ import com.melody.approx.bio.Chromosome.ChromosomeException;
 import com.melody.approx.bio.Individual;
 import com.melody.approx.bio.Problem.ProblemException;
 import com.melody.approx.bio.ProblemPolyTri;
+import com.melody.approx.dsp.MelodiaReader;
+import com.melody.approx.dsp.MelodiaReader.MelodiaReaderException;
+import com.melody.approx.dsp.SilenceChopper;
+import com.melody.approx.pitch.Melody;
+import com.melody.approx.pitch.Melody.MelodyException;
 import com.melody.approx.pitch.PitchContour;
 import com.melody.approx.pitch.PitchContour.ContourType;
+import com.melody.approx.pitch.PitchContour.PitchContourException;
+import com.melody.approx.util.Log;
+import com.melody.approx.util.Log.LogLevel;
 
 /**
  * 
@@ -103,6 +115,33 @@ public class ProblemPolyTriTest {
 		ind.getChromosome().setGene(2, 1.0d);
 		ind.setFitness(problem.getFitness(ind));
 		assertEquals(17.0d, ind.getFitness(),0.0d);
+	}
+	
+	@Test
+	public void test() throws MelodiaReaderException, PitchContourException, MelodyException, FileNotFoundException,
+			ProblemException, ChromosomeException {
+		Log.setLogLevel(LogLevel.SILENT);
+		MelodiaReader reader = new SilenceChopper();
+		FileReader fr = new FileReader("test/london-bridge-melodia.csv");
+		BufferedReader br = new BufferedReader(fr);
+		Melody melody = Melody.transform(reader.getMelody(br), ContourType.MIDI);
+		
+		Individual ind = new Individual(9);
+		ind.getChromosome().setGene(0, 68.52691876745764d);
+		ind.getChromosome().setGene(1, -0.2190010090338726d);
+		ind.getChromosome().setGene(2, 0.39810526605256696d);
+		ind.getChromosome().setGene(3, -0.5170268168714599d);
+		ind.getChromosome().setGene(4, -0.03777658420894796d);
+		ind.getChromosome().setGene(5, -1.2416479640115767d);
+		ind.getChromosome().setGene(6, -0.6349102686936535d);
+		ind.getChromosome().setGene(7, -0.5131233051419892d);
+		ind.getChromosome().setGene(8, 0.3074289422453135d);
+		
+		Log.setLogLevel(LogLevel.DEBUG);
+		ProblemPolyTri problem = new ProblemPolyTri(melody.getPhrases().get(5.590204082d), 3, 3, 1.0d);
+		ind.setFitness( problem.getFitness(ind));
+		Log.debug("Offset 5.590204082 \tFitness: "+ind.getFitness());
+		
 	}
 
 }
