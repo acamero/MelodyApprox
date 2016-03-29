@@ -29,8 +29,8 @@ def parseDirectory( inDir, outDir, jar, algorithm, num)
 			dirs.each do |inFile|			
 				if File.file?(inFile) 
 					for i in 1..num
-						puts 'java -jar '+jar+' --file-name '+ inFile +' --pitch-midi --algorithm ' + algorithm + ' --out-dir ' + outDir + " --seed #{i}" 
-						system('java -jar '+jar+' --file-name '+ inFile +' --pitch-midi --algorithm ' + algorithm + ' --out-dir ' + outDir + " --seed #{i}" )						
+						puts 'java -jar '+jar+' --file-name '+ inFile +' --pitch-midi --algorithm ' + algorithm + ' --out-dir ' + outDir + " --seed #{i} --max-evals 20000" 
+						system('java -jar '+jar+' --file-name '+ inFile +' --pitch-midi --algorithm ' + algorithm + ' --out-dir ' + outDir + " --seed #{i} --max-evals 20000" )						
 					end
 				end
 			end

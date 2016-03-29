@@ -24,7 +24,7 @@ public class MelodyProcessor {
 
 	public enum AlgorithmType {
 		LEGENDRE3(4), LEGENDRE5(6), POLYTRI_331(9), POLYTRI_332(9), POLYTRI_222(7), MEAN(1), POLYTRI_333(
-				9), POLYTRI_443(11), POLYTRI_442(11);
+				9), POLYTRI_443(11), POLYTRI_442(11), POLYTRI_6616(15);
 
 		private int numberOfGenes;
 
@@ -175,6 +175,13 @@ public class MelodyProcessor {
 			mutationInterface = new PolyTriMutation(stdDev);
 			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
 			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 2.0d);
+			individualInit = new PolyTriInit(mean, stdDev);
+			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
+			break;
+		case POLYTRI_6616:
+			mutationInterface = new PolyTriMutation(stdDev);
+			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
+			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 16.0d);
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;

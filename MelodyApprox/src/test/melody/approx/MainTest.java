@@ -81,7 +81,7 @@ public class MainTest {
 		args[0] = "--file-name=test/london-bridge-melodia.csv";
 		args[1] = "--parse-melodia=SILENCE_CHOPPER";
 		args[2] = "--out-dir=test";
-		args[3] = "--algorithm=POLYTRI_331";
+		args[3] = "--algorithm=LEGENDRE3";
 		args[4] = "--pitch-midi";
 		args[5] = "--seed=2";
 		
