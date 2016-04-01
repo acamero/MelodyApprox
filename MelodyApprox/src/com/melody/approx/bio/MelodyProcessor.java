@@ -23,17 +23,30 @@ import com.melody.approx.util.Log;
 public class MelodyProcessor {
 
 	public enum AlgorithmType {
-		LEGENDRE3(4), LEGENDRE5(6), POLYTRI_331(9), POLYTRI_332(9), POLYTRI_222(7), MEAN(1), POLYTRI_333(
-				9), POLYTRI_443(11), POLYTRI_442(11), POLYTRI_6616(15);
+		LEGENDRE3(4, 0.0d), LEGENDRE5(6,0.0d), POLYTRI_CUSTOM(15,16.0d), POLYTRI_6616(15,16.0d), MEAN(1,16.0d);
 
 		private int numberOfGenes;
+		private double omega;
 
-		private AlgorithmType(int numberOfGenes) {
+		private AlgorithmType(int numberOfGenes, double omega) {
 			this.numberOfGenes = numberOfGenes;
+			this.omega = omega;
 		}
 
 		public int getNumberOfGenes() {
 			return numberOfGenes;
+		}
+		
+		public double getOmega() {
+			return omega;
+		}
+		
+		public void setNumberOfGenes(int numberOfGenes) {
+			this.numberOfGenes = numberOfGenes;
+		}
+		
+		public void setOmega(double omega) {
+			this.omega = omega;
 		}
 	}
 
@@ -136,52 +149,17 @@ public class MelodyProcessor {
 			individualInit = new LegendreInit(mean, stdDev);
 			mutationProb = 1.0d / 6.0d;
 			break;
-		case POLYTRI_331:
+		case POLYTRI_CUSTOM:
 			mutationInterface = new PolyTriMutation(stdDev);
 			int cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
-			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 1.0d);
-			individualInit = new PolyTriInit(mean, stdDev);
-			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
-			break;
-		case POLYTRI_332:
-			mutationInterface = new PolyTriMutation(stdDev);
-			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
-			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 2.0d);
-			individualInit = new PolyTriInit(mean, stdDev);
-			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
-			break;
-		case POLYTRI_333:
-			mutationInterface = new PolyTriMutation(stdDev);
-			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
-			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 3.0d);
-			individualInit = new PolyTriInit(mean, stdDev);
-			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
-			break;
-		case POLYTRI_222:
-			mutationInterface = new PolyTriMutation(stdDev);
-			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
-			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 2.0d);
-			individualInit = new PolyTriInit(mean, stdDev);
-			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
-			break;
-		case POLYTRI_443:
-			mutationInterface = new PolyTriMutation(stdDev);
-			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
-			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 3.0d);
-			individualInit = new PolyTriInit(mean, stdDev);
-			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
-			break;
-		case POLYTRI_442:
-			mutationInterface = new PolyTriMutation(stdDev);
-			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
-			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 2.0d);
+			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, algorithmType.getOmega());
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
 		case POLYTRI_6616:
 			mutationInterface = new PolyTriMutation(stdDev);
 			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
-			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, 16.0d);
+			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, algorithmType.getOmega());
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;

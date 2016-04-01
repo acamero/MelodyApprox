@@ -150,7 +150,13 @@ public class Population {
 			offsprings.toArray(popArray);
 			population = Arrays.asList(popArray);
 		} else if (offsprings.size() > populationSize) {
-			throw new PopulationException("The number of offsprings shoul not be greater than the population size");
+			// mix all individuals and retain the popSize better individuals
+			offsprings.addAll(population);
+			Collections.sort(offsprings);
+			Log.debug("Original population added to the offspring and sorted");
+			offsprings.subList(0, populationSize).toArray(popArray);
+			population = Arrays.asList(popArray);
+			// throw new PopulationException("The number of offsprings should not be greater than the population size");
 		} else if (offsprings.size() == populationSize) {
 			Log.debug("All population replaced");
 			offsprings.toArray(popArray);

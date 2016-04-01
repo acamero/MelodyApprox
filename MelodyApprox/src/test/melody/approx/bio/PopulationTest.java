@@ -202,15 +202,7 @@ public class PopulationTest {
 		pop.replaceIndividuals(null);
 	}
 
-	@Test(expected = PopulationException.class)
-	public void biggerOffsprings() throws PopulationException, ChromosomeException {
-		List<Individual> offsprings = new ArrayList<Individual>();
-		for (int i = 0; i < popSize + 1; i++) {
-			offsprings.add(new Individual(numberOfGenes));
-		}
-		pop.replaceIndividuals(offsprings);
-	}
-
+	
 	@Test(expected = UnsupportedOperationException.class)
 	public void replaceWorstAdd() throws PopulationException, ChromosomeException {
 		List<Individual> offsprings = new ArrayList<Individual>();
@@ -250,6 +242,26 @@ public class PopulationTest {
 		Log.info("Replace elite (N=" + offsprings.size() + ")");
 		pop.replaceIndividuals(offsprings);
 		pop.getPopulation().add(new Individual(1));
+	}
+	
+	@Test
+	public void replaceBigger() throws ChromosomeException, PopulationException {
+		Log.setLogLevel(LogLevel.DEBUG);
+		List<Individual> offsprings = new ArrayList<Individual>();
+		for (int i = 0; i < popSize+2; i++) {
+			offsprings.add(new Individual(numberOfGenes));
+			offsprings.get(i).setFitness(2.0d*(double)i);
+			Log.debug("Individual fitness set ="+offsprings.get(i).getFitness());
+		}
+		for(int i=0; i< popSize;i++) {
+			pop.getPopulation().get(i).setFitness(1.0d +(2.0d*(double)i));
+			Log.debug("Individual fitness set ="+pop.getPopulation().get(i).getFitness());
+		}
+		
+		pop.replaceIndividuals(offsprings);
+		for(int i=0; i< popSize;i++) {
+			assertEquals(i,(int)pop.getPopulation().get(i).getFitness());
+		}
 	}
 
 }
