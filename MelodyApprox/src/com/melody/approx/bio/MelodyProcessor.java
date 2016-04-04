@@ -23,7 +23,7 @@ import com.melody.approx.util.Log;
 public class MelodyProcessor {
 
 	public enum AlgorithmType {
-		LEGENDRE3(4, 0.0d), LEGENDRE5(6,0.0d), POLYTRI_CUSTOM(15,16.0d), POLYTRI_6616(15,16.0d), MEAN(1,16.0d);
+		LEGENDRE3(4, 0.0d), LEGENDRE5(6, 0.0d), POLYTRI_CUSTOM(15, 16.0d), POLYTRI_6616(15, 16.0d), MEAN(1, 16.0d);
 
 		private int numberOfGenes;
 		private double omega;
@@ -36,15 +36,15 @@ public class MelodyProcessor {
 		public int getNumberOfGenes() {
 			return numberOfGenes;
 		}
-		
+
 		public double getOmega() {
 			return omega;
 		}
-		
+
 		public void setNumberOfGenes(int numberOfGenes) {
 			this.numberOfGenes = numberOfGenes;
 		}
-		
+
 		public void setOmega(double omega) {
 			this.omega = omega;
 		}
@@ -57,6 +57,7 @@ public class MelodyProcessor {
 	private int maxEvaluations;
 	private int popSize;
 	private int offspringSize;
+	private boolean narrowMutation;
 
 	public MelodyProcessor(AlgorithmType algorithmType, Melody melody) throws MelodyProcessorException {
 		if (melody == null || melody.getPhrases().isEmpty()) {
@@ -78,6 +79,7 @@ public class MelodyProcessor {
 		this.setMaxEvaluations(10000);
 		this.setPopSize(50);
 		this.setOffspringSize(1);
+		setNarrowMutation(false);
 
 	}
 
@@ -142,29 +144,25 @@ public class MelodyProcessor {
 
 		switch (this.algorithmType) {
 		case LEGENDRE3:
-			mutationProb = 1.0d / 4.0d;
+			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 		case LEGENDRE5:
-			mutationInterface = new LegendreMutation(stdDev);
 			fitnessCalc = new ProblemLegendre(contour);
 			individualInit = new LegendreInit(mean, stdDev);
-			mutationProb = 1.0d / 6.0d;
+			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
 		case POLYTRI_CUSTOM:
-			mutationInterface = new PolyTriMutation(stdDev);
 			int cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
 			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, algorithmType.getOmega());
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
 		case POLYTRI_6616:
-			mutationInterface = new PolyTriMutation(stdDev);
 			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
 			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, algorithmType.getOmega());
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
 		case MEAN:
-			mutationInterface = new LegendreMutation(stdDev);
 			individualInit = new LegendreInit(mean, stdDev);
 			fitnessCalc = new ProblemMean(contour, mean);
 			popSize = 1;
@@ -175,6 +173,11 @@ public class MelodyProcessor {
 			break;
 		}
 
+		if (isNarrowMutation()) {
+			mutationInterface = new NarrowMutation(stdDev);
+		} else {
+			mutationInterface = new SimpleMutation(stdDev);
+		}
 		population = new Population(this.popSize, this.algorithmType.getNumberOfGenes(), individualInit);
 
 		algorithm = new Algorithm(fitnessCalc, population, this.offspringSize, this.maxEvaluations, crossoverInterface,
@@ -270,6 +273,14 @@ public class MelodyProcessor {
 
 	public Melody getMelody() {
 		return melody;
+	}
+
+	public boolean isNarrowMutation() {
+		return narrowMutation;
+	}
+
+	public void setNarrowMutation(boolean narrowMutation) {
+		this.narrowMutation = narrowMutation;
 	}
 
 	public class MelodyProcessorException extends Exception {

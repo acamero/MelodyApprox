@@ -10,16 +10,16 @@ import org.junit.Test;
 
 import com.melody.approx.bio.Individual;
 import com.melody.approx.bio.MutationInterface.MutationException;
-import com.melody.approx.bio.PolyTriMutation;
+import com.melody.approx.bio.NarrowMutation;
 
 /**
  * 
  * @author Andrés Camero Unzueta
  *
  */
-public class PolyTriMutationTest {
+public class NarrowMutationTest {
 
-	private PolyTriMutation mut;
+	private NarrowMutation mut;
 	private Individual ind;
 	private String original;
 	
@@ -33,7 +33,7 @@ public class PolyTriMutationTest {
 
 	@Before
 	public void setUp() throws Exception {
-		mut = new PolyTriMutation(1.0d);
+		mut = new NarrowMutation(1.0d);
 		ind = new Individual(10);
 		original = ind.toString();
 	}

@@ -9,14 +9,17 @@ import com.melody.approx.util.RandomGenerator;
  * @author Andrés Camero Unzueta
  *
  */
-public class PolyTriMutation implements MutationInterface {
+public class NarrowMutation implements MutationInterface {
 
+	private static final int MUTATION_NARROW_CYCLE = 500;
 	private double stdDev;
+	private int counter;
 	
-	public PolyTriMutation(double stdDev) {
+	public NarrowMutation(double stdDev) {
 		this.stdDev = stdDev;
+		this.counter = 0;
 	}
-	
+
 	@Override
 	public void mutate(double mutationProb, Individual individual) throws MutationException {
 		if (individual == null) {
@@ -37,6 +40,11 @@ public class PolyTriMutation implements MutationInterface {
 			}
 		}
 		
+		counter++;
+		if(counter%MUTATION_NARROW_CYCLE ==0) {
+			stdDev = 0.9d*stdDev;
+			Log.debug("Standard Deviation set= "+stdDev);
+		}
 	}
 
 }

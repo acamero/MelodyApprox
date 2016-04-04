@@ -139,6 +139,9 @@ public class Main {
 		// number of offsprings
 		options.addOption(Option.builder().longOpt("offsprings").hasArg()
 				.desc("set the number of offsprings per generation").build());
+		// set mutation to become narrower over time
+				options.addOption(Option.builder().longOpt("mutation-narrow")
+						.desc("narrow the mutation space (std. dev) over time").build());
 
 		return options;
 	}
@@ -158,6 +161,7 @@ public class Main {
 		int popSize = NON_ASSIGNED_INT;
 		int offsprings = NON_ASSIGNED_INT;
 		int maxEvals = NON_ASSIGNED_INT;
+		boolean isMutationNarrow = false;
 
 		try {
 			// parse the command line arguments
@@ -259,13 +263,20 @@ public class Main {
 
 			if (line.hasOption("offsprings")) {
 				offsprings = Integer.valueOf(line.getOptionValue("offsprings"));
-				Log.info("Mutation probability set to " + offsprings);
+				Log.info("Offsprings size set to " + offsprings);
 			}
 
 			if (line.hasOption("max-evals")) {
 				maxEvals = Integer.valueOf(line.getOptionValue("max-evals"));
 				Log.info("Maximum number of evaluations set to " + maxEvals);
 			}
+			
+			if (line.hasOption("mutation-narrow")) {
+				isMutationNarrow = true;
+				Log.info("Mutation narrow set to " + isMutationNarrow);
+			}
+			
+			
 
 		} catch (ParseException e) {
 			Log.error("Unexpected exception:" + e.getMessage());
@@ -350,6 +361,9 @@ public class Main {
 					processor.setMaxEvaluations(maxEvals);
 					Log.debug("Maximum evaluations assigned");
 				}
+				
+				processor.setNarrowMutation(isMutationNarrow);
+				Log.debug("arrow mutation set to "+isMutationNarrow);
 
 				String prepend;
 				if (filePath.contains("/")) {

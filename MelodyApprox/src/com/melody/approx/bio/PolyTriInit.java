@@ -35,7 +35,7 @@ public class PolyTriInit implements IndividualInitInterface {
 		// alpha
 		individual.getChromosome().setGene(1, RandomGenerator.nextGaussian(stdDev, 0.0d));
 		// beta
-		individual.getChromosome().setGene(2, RandomGenerator.nextGaussian());
+		individual.getChromosome().setGene(2, RandomGenerator.nextGaussian(stdDev, 0.0d));
 		
 		for (int i = 3; i < numberOfGenes; i++) {
 			individual.getChromosome().setGene(i, RandomGenerator.nextGaussian(stdDev, 0.0d));

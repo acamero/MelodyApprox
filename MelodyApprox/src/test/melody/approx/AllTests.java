@@ -9,7 +9,7 @@ import test.melody.approx.bio.AlgorithmTest;
 import test.melody.approx.bio.ChromosomeTest;
 import test.melody.approx.bio.IndividualTest;
 import test.melody.approx.bio.LegendreInitTest;
-import test.melody.approx.bio.LegendreMutationTest;
+import test.melody.approx.bio.SimpleMutationTest;
 import test.melody.approx.bio.MelodyProcessorTest;
 import test.melody.approx.bio.PopulationTest;
 import test.melody.approx.bio.ProblemLegendreTest;
@@ -33,7 +33,7 @@ import test.melody.approx.util.UtilsTest;
 @SuiteClasses({ PitchContourTest.class, FrequencyContourTest.class, MidiContourTest.class, MelodiaReaderTest.class,
 		SilenceChopperTest.class, RandomGeneratorTest.class, MainTest.class, UtilsTest.class, ChromosomeTest.class,
 		IndividualTest.class, PopulationTest.class, ProblemLegendreTest.class, AlgorithmTest.class,
-		LegendreInitTest.class, LegendreMutationTest.class, SinglePointCrossoverTest.class, MelodyProcessorTest.class,
+		LegendreInitTest.class, SimpleMutationTest.class, SinglePointCrossoverTest.class, MelodyProcessorTest.class,
 		ProblemPolyTriTest.class, ProblemMeanTest.class})
 public class AllTests {
 

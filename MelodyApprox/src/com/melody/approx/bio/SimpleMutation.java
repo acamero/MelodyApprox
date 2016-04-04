@@ -9,11 +9,11 @@ import com.melody.approx.util.RandomGenerator;
  * @author Andrés Camero Unzueta
  *
  */
-public class LegendreMutation implements MutationInterface {
+public class SimpleMutation implements MutationInterface {
 
 	private double stdDev;
 
-	public LegendreMutation(double stdDev) {
+	public SimpleMutation(double stdDev) {
 		this.stdDev = stdDev;
 	}
 
@@ -36,6 +36,6 @@ public class LegendreMutation implements MutationInterface {
 				}
 			}
 		}
-	}
 
+	}
 }

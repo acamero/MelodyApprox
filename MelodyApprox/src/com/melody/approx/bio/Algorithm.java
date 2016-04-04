@@ -16,9 +16,9 @@ import com.melody.approx.util.RandomGenerator;
  *
  */
 public class Algorithm {
-	// report the statistics every EVALUATIONS_REPORT evaluations 
+	// report the statistics every EVALUATIONS_REPORT evaluations
 	private static final int EVALUATIONS_REPORT = 500;
-	
+
 	private FitnessInterface fitnessCalc;
 	private CrossoverInterface crossoverInt;
 	private MutationInterface mutateInt;
@@ -52,7 +52,7 @@ public class Algorithm {
 			throw new AlgorithmException("Mutation interface should not be null");
 		}
 
-		if (offspringSize < 1 || offspringSize > population.getPopulationSize()) {
+		if (offspringSize < 1) {
 			Log.error("Invalid offspring size");
 			throw new AlgorithmException("Invalid offspring size");
 		}
@@ -90,14 +90,14 @@ public class Algorithm {
 			ind.setFitness(fitnessCalc.getFitness(ind));
 			evaluations++;
 			// from time to time, report the stats
-			if(evaluations%EVALUATIONS_REPORT==0) {
+			if (evaluations % EVALUATIONS_REPORT == 0) {
 				Log.info(statsToString());
 			}
 		}
 	}
 
 	public String statsToString() {
-		return "Evaluations="+evaluations+"\t"+population.statsToString();
+		return "Evaluations=" + evaluations + "\t" + population.statsToString();
 	}
 
 	public Individual startAlgorithm()
@@ -113,7 +113,7 @@ public class Algorithm {
 				// mutate individual
 				mutateInt.mutate(mutationProb, ind);
 				// add individual to the list of offsprings
-				offspring.add(ind);				
+				offspring.add(ind);
 			}
 			// compute the fitness of the offspring
 			calculateFitness(offspring);

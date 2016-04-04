@@ -9,8 +9,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.melody.approx.bio.Individual;
-import com.melody.approx.bio.LegendreMutation;
 import com.melody.approx.bio.MutationInterface.MutationException;
+import com.melody.approx.bio.SimpleMutation;
 import com.melody.approx.util.Log;
 import com.melody.approx.util.Log.LogLevel;
 
@@ -19,9 +19,9 @@ import com.melody.approx.util.Log.LogLevel;
  * @author Andrés Camero Unzueta
  *
  */
-public class LegendreMutationTest {
+public class SimpleMutationTest {
 
-	private LegendreMutation mut;
+	private SimpleMutation mut;
 	private Individual ind;
 	private String original;
 
@@ -36,7 +36,7 @@ public class LegendreMutationTest {
 
 	@Before
 	public void setUp() throws Exception {
-		mut = new LegendreMutation(1.0d);
+		mut = new SimpleMutation(1.0d);
 		ind = new Individual(10);
 		original = ind.toString();
 	}

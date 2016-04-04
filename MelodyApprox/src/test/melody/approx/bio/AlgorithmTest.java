@@ -14,13 +14,13 @@ import com.melody.approx.bio.FitnessInterface;
 import com.melody.approx.bio.Individual;
 import com.melody.approx.bio.IndividualInitInterface;
 import com.melody.approx.bio.LegendreInit;
-import com.melody.approx.bio.LegendreMutation;
 import com.melody.approx.bio.MutationInterface;
 import com.melody.approx.bio.MutationInterface.MutationException;
 import com.melody.approx.bio.Population;
 import com.melody.approx.bio.Population.PopulationException;
 import com.melody.approx.bio.Problem.ProblemException;
 import com.melody.approx.bio.ProblemLegendre;
+import com.melody.approx.bio.SimpleMutation;
 import com.melody.approx.bio.SinglePointCrossover;
 import com.melody.approx.pitch.PitchContour;
 import com.melody.approx.pitch.PitchContour.ContourType;
@@ -64,7 +64,7 @@ public class AlgorithmTest {
 		pc.appendMidi(1.5d, 60);
 		fitnessInt = new ProblemLegendre(pc);
 		crossoverInt = new SinglePointCrossover();
-		mutateInt = new LegendreMutation(1.0d);
+		mutateInt = new SimpleMutation(1.0d);
 		initInterface = new LegendreInit(62.0d, 1.0d);
 		population = new Population(popSize, genes, initInterface);
 	}
@@ -98,7 +98,7 @@ public class AlgorithmTest {
 		new Algorithm(fitnessInt, population, 0, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d);
 	}
 
-	@Test(expected = AlgorithmException.class)
+	@Test
 	public void greaterOffspring() throws ProblemException, AlgorithmException {
 		new Algorithm(fitnessInt, population, popSize + 1, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d);
 	}
