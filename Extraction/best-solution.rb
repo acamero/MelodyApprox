@@ -16,7 +16,7 @@ def getBestSolution(inFile, outFile)
 	f = File.open(inFile, "r") 
 	f.each_line do |line|
 		dtl = line.split(";");
-		key = dtl[2] + ";" + dtl[3];
+		key = dtl[0] + ";" + dtl[2] + ";" + dtl[3];
 		if fitness[key].nil? || fitness[key].to_f>dtl[6].to_f
 			fitness[key] = dtl[6];
 			solution[key] = line;			
@@ -71,11 +71,20 @@ if __FILE__ == $0
 	options = OpenStruct.new
 	OptionParser.new do |opt|
 		opt.on('-d', '--in-dir IN_DIR', 'Directory containing solutions to parse') { |o| options.in_dir = o }
+		opt.on('-f', '--in-file IN_FILE', 'File containing solutions to parse') { |o| options.in_file = o }
 		opt.on('-o', '--out-dir OUT_DIR', 'Directory to store best solutions') { |o| options.out_dir = o }
 	end.parse!
 	
 	if !options.in_dir.nil?	&& !options.out_dir.nil?
-		parseDirectory(options.in_dir, options.out_dir);		
+		parseDirectory(options.in_dir, options.out_dir);	
+	elsif !options.in_file.nil? && !options.out_dir.nil?
+		if File.file?(options.in_file) && options.in_file.end_with?("detail.csv")
+			# create out directory if not exists
+			Dir.mkdir(outDir) unless File.exists?(outDir)
+			outDir = File.absolute_path(outDir);
+			outFile = outDir+"/"+inFile.sub("detail.csv","best.csv");
+			getBestSolution(options.in_file,outFile);
+		end
 	else
 		puts "use '-h' or '--help' for more information";
 	end
