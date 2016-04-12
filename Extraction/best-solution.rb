@@ -80,9 +80,9 @@ if __FILE__ == $0
 	elsif !options.in_file.nil? && !options.out_dir.nil?
 		if File.file?(options.in_file) && options.in_file.end_with?("detail.csv")
 			# create out directory if not exists
-			Dir.mkdir(outDir) unless File.exists?(outDir)
-			outDir = File.absolute_path(outDir);
-			outFile = outDir+"/"+inFile.sub("detail.csv","best.csv");
+			Dir.mkdir(options.out_dir) unless File.exists?(options.out_dir)
+			outDir = File.absolute_path(options.out_dir);
+			outFile = outDir+"/"+options.in_file.sub("detail.csv","best.csv");
 			getBestSolution(options.in_file,outFile);
 		end
 	else
