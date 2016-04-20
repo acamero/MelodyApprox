@@ -33,7 +33,7 @@ def convertToCsd(in_file, is_midi)
 			accum += tmp[0] - prevTime;
 		else
 			if prevMidi>0
-				puts "\ti1 #{start} #{accum} 2000 #{prevMidi}"; 
+				puts "\ti2 #{start} #{accum} 0.9 #{prevMidi}"; 
 			end
 			start = tmp[0];
 			accum = 0;
@@ -45,30 +45,45 @@ def convertToCsd(in_file, is_midi)
 	f.close
 end
 
-def putHeader() 
+def putHeader(fileName) 
 	puts "<CsoundSynthesizer>
 <CsOptions>
 	; Select audio/midi flags here according to platform
 	 -odac    ;;;realtime audio out
 	;-iadc    ;;;uncomment -iadc if realtime audio input is needed too
 	; For Non-realtime ouput leave only the line below:
-	; -o oscils.wav -W ;;; for file output any platform
+	; -o #{fileName}.wav -W ;;; for file output any platform
 </CsOptions>
 
 <CsInstruments>
 	; originally tone.orc 
 	sr = 44100
-	kr = 4410
-	ksmps = 10
+	;kr = 4410
+	ksmps = 32
 	nchnls = 1
+	0dbfs = 1
+
 	instr   1 
-	a1 oscil p4, cpsmidinn(p5), 1 ; simple oscillator
+	; simple oscillator 
+	; p4=amp
+	; p5=pitch
+	a1 oscil p4, cpsmidinn(p5), 1 
 	 out a1
+	endin
+
+	instr 2
+	; p4=amp
+	; p5=freq
+	; p6=attack time
+	; p7=release time
+	ares linen  p4, p3*0.1, p3, p3*0.1 ; p4, p6, p3, p7 
+	asig poscil ares, cpsmidinn(p5), 1    
+	     outs   asig, asig   		                                 
 	endin
 </CsInstruments>
 
 <CsScore>
-	f1 0 8192 10 1
+	f1 0 16384 10 1                                          ; Sine
 "
 end
 
@@ -90,7 +105,13 @@ if __FILE__ == $0
 	
 	if !options.in_file.nil?
 		if File.file?(options.in_file) 
-			putHeader();
+			outFile = options.in_file;
+			i = options.in_file.rindex("/");
+			if i
+				outFile = outFile[i+1,outFile.length];
+			end
+
+			putHeader(outFile);
 			convertToCsd(options.in_file, options.is_midi);	
 			putFooter();	
 		else
