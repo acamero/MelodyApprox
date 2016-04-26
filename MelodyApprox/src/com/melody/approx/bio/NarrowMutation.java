@@ -40,11 +40,12 @@ public class NarrowMutation implements MutationInterface {
 			}
 		}
 		
+		stdDev = 0.99d*stdDev;
 		counter++;
-		if(counter%MUTATION_NARROW_CYCLE ==0) {
-			stdDev = 0.9d*stdDev;
-			Log.debug("Standard Deviation set= "+stdDev);
+		if(counter%MUTATION_NARROW_CYCLE ==0) {			
+			Log.debug("Standard Deviation actual value= "+stdDev);
 		}
+		
 	}
 
 }

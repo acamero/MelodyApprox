@@ -72,7 +72,7 @@ public class RandomGeneratorTest {
 	@Test
 	public void nextDouble() {
 		double d = RandomGenerator.nextDouble();
-		assertTrue(Double.isFinite(d));
+		assertFalse(Double.isInfinite(d));
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class RandomGeneratorTest {
 	@Test
 	public void nextGaussian() {
 		double d = RandomGenerator.nextGaussian();
-		assertTrue(Double.isFinite(d));		
+		assertFalse(Double.isInfinite(d));		
 	}
 	
 	@Test
@@ -93,7 +93,7 @@ public class RandomGeneratorTest {
 		double std = 1.5d;
 		double mean = 60.0d; 
 		double d = RandomGenerator.nextGaussian(std, mean);
-		assertTrue(Double.isFinite(d));
+		assertFalse(Double.isInfinite(d));
 	}
 
 }
