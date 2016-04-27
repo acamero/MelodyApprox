@@ -15,8 +15,7 @@ public class ProblemPolyTri extends Problem {
 	private int sinOffset;	
 	private int numberOfGenes;
 	private double omega;
-	private double[][] timeMatrix;
-	private double[] solutionVector;
+	
 	
 	public ProblemPolyTri(PitchContour contour, int numberSin, int numberCos, double omega) throws ProblemException {
 		super(contour);		
@@ -34,6 +33,7 @@ public class ProblemPolyTri extends Problem {
 		Log.debug("Sin offset: "+sinOffset);
 		timeMatrix = new double[contour.getContour().size()][numberOfGenes];
 		solutionVector = new double[contour.getContour().size()];
+		Log.debug("Proceed to load time matrix and solution vector");
 		loadTimeMatrix();
 	}
 
@@ -45,56 +45,13 @@ public class ProblemPolyTri extends Problem {
 		
 		if( individual.getNumberOfGenes() != numberOfGenes ) {
 			throw new ProblemException("The number of genes missmatched the problem definition");
-		}
+		}			
 		
-		double fitness = 0.0d;
-
-		for(int i=0;i<solutionVector.length;i++) {
-			double note = 0.0d;
-			for (int j = 0; j < individual.getNumberOfGenes(); j++) {
-				note += individual.getChromosome().getGene(j) * timeMatrix[i][j];
-			}
-			fitness += Math.pow(note - solutionVector[i], 2.0d);
-		}
-		
-		/*
-		for (Entry<Double, Double> c : contour.getContour().entrySet()) {
-			// offset, pitch
-			// Log.debug("Processing note (" + c.getKey() + "," + c.getValue() + ")");
-			double note = 0.0d;
-			
-			//constant
-			note += individual.getChromosome().getGene(0);
-			// alpha
-			note += individual.getChromosome().getGene(1) * c.getKey();
-			// beta
-			note += individual.getChromosome().getGene(2) * c.getKey() * c.getKey();
-			
-			for (int i = BASE_CONSTANTS; i < sinOffset; i++) {
-				double j = (double)i - (double)BASE_CONSTANTS + 1.0d;				
-				// angle in rads
-				note += individual.getChromosome().getGene(i) * Math.sin( Math.toRadians(j * omega * c.getKey()));
-				// angle in degs
-				// note += individual.getChromosome().getGene(i) * Math.sin( j * omega * c.getKey());
-			}
-			
-			for (int i = sinOffset; i < numberOfGenes; i++) {
-				double j = (double)i - (double)sinOffset + 1.0d;
-				// angle in rads
-				note += individual.getChromosome().getGene(i) * Math.cos( Math.toRadians(j * omega * c.getKey()));
-				// angle in degs
-				// note += individual.getChromosome().getGene(i) * Math.cos( j * omega * c.getKey());
-			}
-			
-			fitness += Math.pow(note - c.getValue(), 2.0d);
-			
-		}
-		*/
-
-		return fitness;
+		return calculateFitness(individual);
 	}
 	
-	private void loadTimeMatrix() {
+	@Override
+	protected void loadTimeMatrix() {
 		int i=0;
 		for (Entry<Double, Double> c : contour.getContour().entrySet()) {						
 			//constant
@@ -121,5 +78,7 @@ public class ProblemPolyTri extends Problem {
 		}
 		
 	}
+
+	
 
 }

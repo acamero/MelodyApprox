@@ -12,13 +12,10 @@ import com.melody.approx.util.Log;
  */
 public class ProblemLegendre extends Problem {
 	private static final int MAX_ORDER = 5;
-	
-	private double[][] timeMatrix;
-	private double[] solutionVector;
 
 	public ProblemLegendre(PitchContour contour) throws ProblemException {
 		super(contour);
-		timeMatrix = new double[contour.getContour().size()][MAX_ORDER+1];
+		timeMatrix = new double[contour.getContour().size()][MAX_ORDER + 1];
 		solutionVector = new double[contour.getContour().size()];
 		// load time matrix
 		loadTimeMatrix();
@@ -28,34 +25,12 @@ public class ProblemLegendre extends Problem {
 	public double getFitness(Individual individual) throws ProblemException {
 		if (individual == null) {
 			throw new ProblemException("Null individual");
-		} else if (individual.getNumberOfGenes()> (MAX_ORDER+1)) {
+		} else if (individual.getNumberOfGenes() > (MAX_ORDER + 1)) {
 			throw new ProblemException("Unsupported Legendre order");
 		}
 
-		double fitness = 0.0d;
 
-		
-		for(int i=0;i<solutionVector.length;i++) {
-			double note = 0.0d;
-			for (int j = 0; j < individual.getNumberOfGenes(); j++) {
-				note += individual.getChromosome().getGene(j) * timeMatrix[i][j];
-			}
-			fitness += Math.pow(note - solutionVector[i], 2.0d);
-		}
-		/*
-		for (Entry<Double, Double> c : contour.getContour().entrySet()) {
-			// offset, pitch
-			// Log.debug("Processing note (" + c.getKey() + "," + c.getValue() +
-			// ")");
-			double note = 0.0d;
-			for (int i = 0; i < individual.getNumberOfGenes(); i++) {
-				note += individual.getChromosome().getGene(i) * legendrePoly(c.getKey(), i);
-			}
-			fitness += Math.pow(note - c.getValue(), 2.0d);
-		}
-		*/
-
-		return fitness;
+		return calculateFitness(individual);
 	}
 
 	private double legendrePoly(double t, int order) throws ProblemException {
@@ -86,16 +61,19 @@ public class ProblemLegendre extends Problem {
 		}
 	}
 
-	private void loadTimeMatrix() throws ProblemException {
-		int i=0;
+	@Override
+	protected void loadTimeMatrix() throws ProblemException {
+		int i = 0;
 		for (Entry<Double, Double> c : contour.getContour().entrySet()) {
 			for (int j = 0; j <= MAX_ORDER; j++) {
-				timeMatrix[i][j]=legendrePoly(c.getKey(), j);
+				timeMatrix[i][j] = legendrePoly(c.getKey(), j);
 			}
 			solutionVector[i] = c.getValue();
 			i++;
 		}
 
 	}
+
+	
 
 }

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.melody.approx.bio.Chromosome.ChromosomeException;
@@ -71,5 +72,21 @@ public class IndividualTest {
 		assertEquals(1.0d,inds.get(0).getFitness(),0.0d);
 		assertEquals(2.0d,inds.get(1).getFitness(),0.0d);
 		assertEquals(3.0d,inds.get(2).getFitness(),0.0d);
+	}
+	
+	@Test
+	public void copy() throws ChromosomeException {
+		ind = new Individual(5);
+		for(int i=0;i<ind.getNumberOfGenes();i++){
+			ind.getChromosome().setGene(i, (double)i);
+		}
+		double fit = 1.0d;
+		ind.setFitness(fit);
+		Individual copy = ind.copy();
+		for(int i=0;i<ind.getNumberOfGenes();i++){
+			assertEquals((double)i, copy.getChromosome().getGene(i), 0.0d);
+		}
+		assertEquals(fit, copy.getFitness(), 0.0d);
+		Assert.assertNotEquals(ind, copy);
 	}
 }

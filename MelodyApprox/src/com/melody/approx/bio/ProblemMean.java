@@ -49,4 +49,15 @@ public class ProblemMean extends Problem {
 		return fitness;
 	}
 
+	@Override
+	public Individual localSearch(Individual individual) {
+		return individual;
+	}
+
+	@Override
+	protected void loadTimeMatrix() throws ProblemException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

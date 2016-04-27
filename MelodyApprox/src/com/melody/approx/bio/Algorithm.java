@@ -3,6 +3,7 @@ package com.melody.approx.bio;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.melody.approx.bio.Chromosome.ChromosomeException;
 import com.melody.approx.bio.CrossoverInterface.CrossoverException;
 import com.melody.approx.bio.MutationInterface.MutationException;
 import com.melody.approx.bio.Population.PopulationException;
@@ -23,6 +24,7 @@ public class Algorithm {
 	private CrossoverInterface crossoverInt;
 	private MutationInterface mutateInt;
 	private Population population;
+	private LocalSearchInterface localSearch;
 	private int offspringSize;
 	private int maxEvaluations;
 	private int evaluations;
@@ -30,8 +32,8 @@ public class Algorithm {
 	private double mutationProb;
 
 	public Algorithm(FitnessInterface fitnessCalc, Population population, int offspringSize, int maxEvaluations,
-			CrossoverInterface crossoverInt, MutationInterface mutateInt, double crossoverProb, double mutationProb)
-			throws ProblemException, AlgorithmException {
+			CrossoverInterface crossoverInt, MutationInterface mutateInt, double crossoverProb, double mutationProb,
+			LocalSearchInterface localSearch) throws ProblemException, AlgorithmException {
 		if (fitnessCalc == null) {
 			Log.error("Fitness interface should not be null");
 			throw new AlgorithmException("Fitness interface should not be null");
@@ -50,6 +52,11 @@ public class Algorithm {
 		if (mutateInt == null) {
 			Log.error("Mutation interface should not be null");
 			throw new AlgorithmException("Mutation interface should not be null");
+		}
+
+		if (localSearch == null) {
+			Log.error("Local search interface should not be null");
+			throw new AlgorithmException("Local search interface should not be null");
 		}
 
 		if (offspringSize < 1) {
@@ -78,6 +85,7 @@ public class Algorithm {
 		this.evaluations = 0;
 		this.crossoverProb = crossoverProb;
 		this.mutationProb = mutationProb;
+		this.localSearch = localSearch;
 
 		// calculate the fitness of the initial population and
 		// initialize statistics of the population
@@ -101,7 +109,7 @@ public class Algorithm {
 	}
 
 	public Individual startAlgorithm()
-			throws PopulationException, ProblemException, CrossoverException, MutationException {
+			throws PopulationException, ProblemException, CrossoverException, MutationException,  ChromosomeException {
 		List<Individual> offspring = new ArrayList<Individual>();
 		// check stop conditions
 		while (evaluations < maxEvaluations && population.getBestFitness() > 0.0d) {
@@ -118,6 +126,14 @@ public class Algorithm {
 			// compute the fitness of the offspring
 			calculateFitness(offspring);
 
+			// local search
+			Individual localTemp = localSearch.localSearch(population.getPopulation().get(population.getBestPosition()));
+			if( localTemp.getFitness()<population.getPopulation().get(population.getBestPosition()).getFitness()) {
+				// replace the individual. The stats will be recomputed once
+				// the offspring replace the new population
+				population.getPopulation().set(population.getBestPosition(), localTemp);
+			}
+			
 			// replace population
 			population.replaceIndividuals(offspring);
 		}

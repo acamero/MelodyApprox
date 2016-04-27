@@ -14,6 +14,7 @@ import com.melody.approx.bio.FitnessInterface;
 import com.melody.approx.bio.Individual;
 import com.melody.approx.bio.IndividualInitInterface;
 import com.melody.approx.bio.LegendreInit;
+import com.melody.approx.bio.LocalSearchInterface;
 import com.melody.approx.bio.MutationInterface;
 import com.melody.approx.bio.MutationInterface.MutationException;
 import com.melody.approx.bio.Population;
@@ -26,6 +27,7 @@ import com.melody.approx.pitch.PitchContour;
 import com.melody.approx.pitch.PitchContour.ContourType;
 import com.melody.approx.bio.Algorithm;
 import com.melody.approx.bio.Algorithm.AlgorithmException;
+import com.melody.approx.bio.Chromosome.ChromosomeException;
 import com.melody.approx.util.Log;
 import com.melody.approx.util.Log.LogLevel;
 
@@ -45,6 +47,7 @@ public class AlgorithmTest {
 	private Population population;
 	private PitchContour pc;
 	private IndividualInitInterface initInterface;
+	private LocalSearchInterface localSearch;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -62,7 +65,9 @@ public class AlgorithmTest {
 		pc.appendMidi(0.5d, 61);
 		pc.appendMidi(1.0d, 63);
 		pc.appendMidi(1.5d, 60);
-		fitnessInt = new ProblemLegendre(pc);
+		ProblemLegendre problem = new ProblemLegendre(pc);
+		fitnessInt = problem;
+		localSearch = problem;
 		crossoverInt = new SinglePointCrossover();
 		mutateInt = new SimpleMutation(1.0d);
 		initInterface = new LegendreInit(62.0d, 1.0d);
@@ -75,38 +80,43 @@ public class AlgorithmTest {
 
 	@Test(expected = AlgorithmException.class)
 	public void nullFitnessInterface() throws ProblemException, AlgorithmException {
-		new Algorithm(null, population, popSize - 1, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d);
+		new Algorithm(null, population, popSize - 1, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d, localSearch);
 	}
 
 	@Test(expected = AlgorithmException.class)
 	public void nullPopulation() throws ProblemException, AlgorithmException {
-		new Algorithm(fitnessInt, null, popSize - 1, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d);
+		new Algorithm(fitnessInt, null, popSize - 1, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d, localSearch);
 	}
 
 	@Test(expected = AlgorithmException.class)
 	public void nullCrossover() throws ProblemException, AlgorithmException {
-		new Algorithm(fitnessInt, population, popSize - 1, maxEvals, null, mutateInt, 1.0d, 1.0d);
+		new Algorithm(fitnessInt, population, popSize - 1, maxEvals, null, mutateInt, 1.0d, 1.0d, localSearch);
 	}
 
 	@Test(expected = AlgorithmException.class)
 	public void nullMutate() throws ProblemException, AlgorithmException {
-		new Algorithm(fitnessInt, population, popSize - 1, maxEvals, crossoverInt, null, 1.0d, 1.0d);
+		new Algorithm(fitnessInt, population, popSize - 1, maxEvals, crossoverInt, null, 1.0d, 1.0d, localSearch);
+	}
+	
+	@Test(expected = AlgorithmException.class)
+	public void nullLocalSearch() throws ProblemException, AlgorithmException {
+		new Algorithm(fitnessInt, population, popSize - 1, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d, null);
 	}
 
 	@Test(expected = AlgorithmException.class)
 	public void zeroOffspring() throws ProblemException, AlgorithmException {
-		new Algorithm(fitnessInt, population, 0, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d);
+		new Algorithm(fitnessInt, population, 0, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d, localSearch);
 	}
 
 	@Test
 	public void greaterOffspring() throws ProblemException, AlgorithmException {
-		new Algorithm(fitnessInt, population, popSize + 1, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d);
+		new Algorithm(fitnessInt, population, popSize + 1, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d, localSearch);
 	}
 
 	@Test
 	public void steadyAlgorithm()
-			throws ProblemException, AlgorithmException, PopulationException, CrossoverException, MutationException {
-		Algorithm alg = new Algorithm(fitnessInt, population, 1, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d);
+			throws ProblemException, AlgorithmException, PopulationException, CrossoverException, MutationException, ChromosomeException {
+		Algorithm alg = new Algorithm(fitnessInt, population, 1, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d, localSearch);
 		Individual ind = alg.startAlgorithm();
 		Log.info("Best individual "+ind.toString()+ " after "+alg.getEvaluations()+" evaluations");
 		assertTrue(alg.getEvaluations()>=maxEvals);
@@ -114,8 +124,8 @@ public class AlgorithmTest {
 	
 	@Test
 	public void eliteAlgorithm()
-			throws ProblemException, AlgorithmException, PopulationException, CrossoverException, MutationException {
-		Algorithm alg = new Algorithm(fitnessInt, population, popSize-1, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d);
+			throws ProblemException, AlgorithmException, PopulationException, CrossoverException, MutationException, ChromosomeException {
+		Algorithm alg = new Algorithm(fitnessInt, population, popSize-1, maxEvals, crossoverInt, mutateInt, 1.0d, 1.0d, localSearch);
 		Individual ind = alg.startAlgorithm();
 		Log.info("Best individual "+ind.toString()+ " after "+alg.getEvaluations()+" evaluations");
 		assertTrue(alg.getEvaluations()>=maxEvals);

@@ -58,6 +58,7 @@ public class MelodyProcessor {
 	private int popSize;
 	private int offspringSize;
 	private boolean narrowMutation;
+	private Problem problem;
 
 	public MelodyProcessor(AlgorithmType algorithmType, Melody melody) throws MelodyProcessorException {
 		if (melody == null || melody.getPhrases().isEmpty()) {
@@ -141,30 +142,31 @@ public class MelodyProcessor {
 		FitnessInterface fitnessCalc = null;
 		Population population = null;
 		IndividualInitInterface individualInit = null;
+		LocalSearchInterface localSearch = null;
 
 		switch (this.algorithmType) {
 		case LEGENDRE3:
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 		case LEGENDRE5:
-			fitnessCalc = new ProblemLegendre(contour);
+			problem = new ProblemLegendre(contour);			
 			individualInit = new LegendreInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
 		case POLYTRI_CUSTOM:
 			int cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
-			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, algorithmType.getOmega());
+			problem = new ProblemPolyTri(contour, cosSin, cosSin, algorithmType.getOmega());
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
 		case POLYTRI_6616:
 			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
-			fitnessCalc = new ProblemPolyTri(contour, cosSin, cosSin, algorithmType.getOmega());
+			problem = new ProblemPolyTri(contour, cosSin, cosSin, algorithmType.getOmega());
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
 			break;
 		case MEAN:
 			individualInit = new LegendreInit(mean, stdDev);
-			fitnessCalc = new ProblemMean(contour, mean);
+			problem = new ProblemMean(contour, mean);
 			popSize = 1;
 			maxEvaluations = 1;
 			offspringSize = 1;
@@ -172,6 +174,9 @@ public class MelodyProcessor {
 			mutationProb = 0.0d;
 			break;
 		}
+		
+		fitnessCalc = problem;
+		localSearch = problem;
 
 		if (isNarrowMutation()) {
 			mutationInterface = new NarrowMutation(stdDev);
@@ -181,7 +186,7 @@ public class MelodyProcessor {
 		population = new Population(this.popSize, this.algorithmType.getNumberOfGenes(), individualInit);
 
 		algorithm = new Algorithm(fitnessCalc, population, this.offspringSize, this.maxEvaluations, crossoverInterface,
-				mutationInterface, this.crossoverProb, this.mutationProb);
+				mutationInterface, this.crossoverProb, this.mutationProb, localSearch);
 
 		return algorithm;
 	}
