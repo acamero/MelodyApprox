@@ -23,7 +23,13 @@ import com.melody.approx.util.Log;
 public class MelodyProcessor {
 
 	public enum AlgorithmType {
-		LEGENDRE3(4, 0.0d), LEGENDRE5(6, 0.0d), POLYTRI_CUSTOM(15, 16.0d), POLYTRI_6616(15, 16.0d), MEAN(1, 16.0d);
+		LEGENDRE3(4, 0.0d), LEGENDRE5(6, 0.0d), 
+		POLYTRI_CUSTOM(15, 16.0d), MEAN(1, 16.0d),
+		POLYTRI_6616(15, 16.0d), POLYTRI_6632(15, 32.0d),POLYTRI_6664(15, 64.0d),POLYTRI_66128(15, 128.0d),POLYTRI_66256(15, 256.0d),
+		POLYTRI_101016(23, 16.0d), POLYTRI_101032(23, 32.0d),POLYTRI_101064(23, 64.0d),POLYTRI_1010128(23, 128.0d),POLYTRI_1010256(23, 256.0d),
+		POLYTRI_202016(43, 16.0d), POLYTRI_202032(43, 32.0d),POLYTRI_202064(43, 64.0d),POLYTRI_2020128(43, 128.0d),POLYTRI_2020256(43, 256.0d),
+		POLYTRI_303016(63, 16.0d), POLYTRI_303032(63, 32.0d),POLYTRI_303064(63, 64.0d),POLYTRI_3030128(63, 128.0d),POLYTRI_3030256(63, 256.0d)
+		;
 
 		private int numberOfGenes;
 		private double omega;
@@ -59,6 +65,7 @@ public class MelodyProcessor {
 	private int offspringSize;
 	private boolean narrowMutation;
 	private Problem problem;
+	private Problem.LocalSearchType localSearchType;
 
 	public MelodyProcessor(AlgorithmType algorithmType, Melody melody) throws MelodyProcessorException {
 		if (melody == null || melody.getPhrases().isEmpty()) {
@@ -80,6 +87,7 @@ public class MelodyProcessor {
 		this.setMaxEvaluations(10000);
 		this.setPopSize(50);
 		this.setOffspringSize(1);
+		this.setLocalSearchType(null);
 		setNarrowMutation(false);
 
 	}
@@ -95,7 +103,9 @@ public class MelodyProcessor {
 		Algorithm algorithm;
 		Individual individual;
 		double fitness = 0.0d;
+		int points = 0;
 		long startTime = System.currentTimeMillis();
+		
 		// apply the algorithm to each one of the contours
 		for (Entry<Double, PitchContour> e : melody.getPhrases().entrySet()) {
 			algorithm = prepareAlgorithm(e.getValue());
@@ -117,6 +127,7 @@ public class MelodyProcessor {
 			partialWriter.write(e.getValue().getContour().size() + ";");
 			partialWriter.write(individual.getChromosome().toString());
 			partialWriter.write("\n");
+			points += e.getValue().getContour().size();
 		}
 		long finishTime = System.currentTimeMillis();
 
@@ -125,7 +136,8 @@ public class MelodyProcessor {
 		;
 		finalWriter.write(startTime + ";");
 		finalWriter.write(finishTime + ";");
-		finalWriter.write(fitness + "");
+		finalWriter.write(fitness + ";");
+		finalWriter.write(points + "");
 		finalWriter.write("\n");
 
 		Log.info("Start time=" + startTime + "\tFinish time=" + finishTime + "\tTotal fitness=" + fitness);
@@ -157,13 +169,8 @@ public class MelodyProcessor {
 			problem = new ProblemPolyTri(contour, cosSin, cosSin, algorithmType.getOmega());
 			individualInit = new PolyTriInit(mean, stdDev);
 			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
-			break;
-		case POLYTRI_6616:
-			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
-			problem = new ProblemPolyTri(contour, cosSin, cosSin, algorithmType.getOmega());
-			individualInit = new PolyTriInit(mean, stdDev);
-			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
-			break;
+			break;		
+			
 		case MEAN:
 			individualInit = new LegendreInit(mean, stdDev);
 			problem = new ProblemMean(contour, mean);
@@ -173,6 +180,16 @@ public class MelodyProcessor {
 			crossoverProb = 0.0d;
 			mutationProb = 0.0d;
 			break;
+		default: // POLYTRI_xxx
+			cosSin = (algorithmType.getNumberOfGenes() - ProblemPolyTri.BASE_CONSTANTS) / 2;
+			problem = new ProblemPolyTri(contour, cosSin, cosSin, algorithmType.getOmega());
+			individualInit = new PolyTriInit(mean, stdDev);
+			mutationProb = 1.0d / algorithmType.getNumberOfGenes();
+			break;
+		}
+		
+		if(localSearchType!=null) {
+			problem.setLocalSearchType(localSearchType);
 		}
 		
 		fitnessCalc = problem;
@@ -286,6 +303,14 @@ public class MelodyProcessor {
 
 	public void setNarrowMutation(boolean narrowMutation) {
 		this.narrowMutation = narrowMutation;
+	}
+
+	public Problem.LocalSearchType getLocalSearchType() {
+		return localSearchType;
+	}
+
+	public void setLocalSearchType(Problem.LocalSearchType localSearchType) {
+		this.localSearchType = localSearchType;
 	}
 
 	public class MelodyProcessorException extends Exception {

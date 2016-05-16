@@ -26,6 +26,7 @@ import com.melody.approx.bio.MelodyProcessor.AlgorithmType;
 import com.melody.approx.bio.MelodyProcessor.MelodyProcessorException;
 import com.melody.approx.bio.MutationInterface.MutationException;
 import com.melody.approx.bio.Population.PopulationException;
+import com.melody.approx.bio.Problem;
 import com.melody.approx.bio.Problem.ProblemException;
 import com.melody.approx.dsp.MelodiaReader;
 import com.melody.approx.dsp.MelodiaReader.MelodiaReaderException;
@@ -140,8 +141,12 @@ public class Main {
 		options.addOption(Option.builder().longOpt("offsprings").hasArg()
 				.desc("set the number of offsprings per generation").build());
 		// set mutation to become narrower over time
-				options.addOption(Option.builder().longOpt("mutation-narrow")
-						.desc("narrow the mutation space (std. dev) over time").build());
+		options.addOption(Option.builder().longOpt("mutation-narrow")
+				.desc("narrow the mutation space (std. dev) over time").build());
+		// set the local search version to be used
+		options.addOption(Option.builder().longOpt("local-search").hasArg()
+				.desc("use a specific local search (" + Arrays.toString(Problem.LocalSearchType.values()) + ")")
+				.build());
 
 		return options;
 	}
@@ -162,6 +167,7 @@ public class Main {
 		int offsprings = NON_ASSIGNED_INT;
 		int maxEvals = NON_ASSIGNED_INT;
 		boolean isMutationNarrow = false;
+		Problem.LocalSearchType localSearchType = null;
 
 		try {
 			// parse the command line arguments
@@ -224,6 +230,16 @@ public class Main {
 					parseMelodia = ParseMelodia.DEFAULT;
 				}
 			}
+			
+			if (line.hasOption("local-search")) {
+				String tmp = line.getOptionValue("local-search");
+				for (Problem.LocalSearchType f : Problem.LocalSearchType.values()) {
+					if (f.toString().compareToIgnoreCase(tmp) == 0) {
+						localSearchType = f;
+						Log.info("Local search selection: " + localSearchType.toString());
+					}
+				}				
+			}
 
 			if (line.hasOption("file-name")) {
 				filePath = line.getOptionValue("file-name");
@@ -270,13 +286,11 @@ public class Main {
 				maxEvals = Integer.valueOf(line.getOptionValue("max-evals"));
 				Log.info("Maximum number of evaluations set to " + maxEvals);
 			}
-			
+
 			if (line.hasOption("mutation-narrow")) {
 				isMutationNarrow = true;
 				Log.info("Mutation narrow set to " + isMutationNarrow);
 			}
-			
-			
 
 		} catch (ParseException e) {
 			Log.error("Unexpected exception:" + e.getMessage());
@@ -361,9 +375,13 @@ public class Main {
 					processor.setMaxEvaluations(maxEvals);
 					Log.debug("Maximum evaluations assigned");
 				}
-				
+				if(localSearchType!=null) {
+					processor.setLocalSearchType(localSearchType);
+					Log.debug("Local search type assigned");
+				}
+
 				processor.setNarrowMutation(isMutationNarrow);
-				Log.debug("arrow mutation set to "+isMutationNarrow);
+				Log.debug("arrow mutation set to " + isMutationNarrow);
 
 				String prepend;
 				if (filePath.contains("/")) {
@@ -411,7 +429,7 @@ public class Main {
 
 					if (init) {
 						// write a header to the file
-						finalWriter.write("file;seed;algorithm;startTime;endTime;fitness\n");
+						finalWriter.write("file;seed;algorithm;startTime;endTime;fitness;points\n");
 						finalWriter.flush();
 					}
 				}

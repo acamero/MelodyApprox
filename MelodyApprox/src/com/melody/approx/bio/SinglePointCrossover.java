@@ -12,7 +12,7 @@ import com.melody.approx.util.RandomGenerator;
 public class SinglePointCrossover implements CrossoverInterface {
 
 	@Override
-	public Individual crossover(double crossoverProb, Individual a, Individual b) throws CrossoverException {
+	public synchronized Individual crossover(double crossoverProb, Individual a, Individual b) throws CrossoverException {
 		if (a == null || b == null || a.getNumberOfGenes() != b.getNumberOfGenes()) {
 			Log.error("Individuals should not be null nor of different size");
 			throw new CrossoverException("Individuals should not be null nor of different size");

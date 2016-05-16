@@ -12,6 +12,8 @@ import com.melody.approx.util.RandomGenerator;
 public class NarrowMutation implements MutationInterface {
 
 	private static final int MUTATION_NARROW_CYCLE = 500;
+	private static final int MUTATION_BEGIN = 5000;
+	private static final double EPSILON = 0.999d;
 	private double stdDev;
 	private int counter;
 	
@@ -40,10 +42,14 @@ public class NarrowMutation implements MutationInterface {
 			}
 		}
 		
-		stdDev = 0.99d*stdDev;
+		
 		counter++;
 		if(counter%MUTATION_NARROW_CYCLE ==0) {			
 			Log.debug("Standard Deviation actual value= "+stdDev);
+		}
+		
+		if(counter>MUTATION_BEGIN) {
+			stdDev = EPSILON*stdDev;
 		}
 		
 	}

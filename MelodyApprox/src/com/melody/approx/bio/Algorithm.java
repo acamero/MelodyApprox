@@ -132,6 +132,7 @@ public class Algorithm {
 				// replace the individual. The stats will be recomputed once
 				// the offspring replace the new population
 				population.getPopulation().set(population.getBestPosition(), localTemp);
+				Log.debug("Individual improved by local search");
 			}
 			
 			// replace population
