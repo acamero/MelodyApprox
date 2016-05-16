@@ -42,6 +42,6 @@ fitness4 = sum(power(pitch-y4,2));
 % tp=1:length(t)*0.1;
 % plot( t(tp),pitch(tp), ".", t(tp), y4(tp));
 
-fit = [fitness0 fitness1 fitness2 fitness3 fitness4]
+fit = [fitness0 fitness1 fitness2 fitness3 fitness4 frames]
 
 endfunction

@@ -2,7 +2,9 @@
 directory = "/home/andu/Documentos/uma/tfm/results/v2.0/melodia/";
 
 Files=dir(strcat(directory,'*.csv'));
-fit = 0:4;
+%frames
+fit =1:6;
+
 for k=1:length(Files)
    fileName=Files(k).name;
    temp = fitnessByPhrases(strcat(directory,fileName) );
@@ -10,5 +12,5 @@ for k=1:length(Files)
    fit = [fit;temp];
 end
 
-%csvwrite("fitness-frames.csv",fit);
+csvwrite("fitness-phrases.csv",fit);
 
