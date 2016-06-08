@@ -53,7 +53,7 @@ def legendre(params, t)
 		note += params[5]*( 7.875 * t**5 - 8.75 * t**3 + 1.875 * t );
 	end
 		
-	return note.round;
+	return note.floor;
 end
 
 def convert(in_file, duration)
@@ -62,9 +62,11 @@ def convert(in_file, duration)
 	solutions = Array.new;
 	f.each_line do |line|
 		tmp = line.split(";");
-		# file;seed;algorithm;offset;startTime;endTime;fitness;evaluations;points;solution
-		sol = Solution.new(tmp[3].to_f, tmp[8].to_f, tmp[9]);
-		solutions.push(sol);
+		if(!tmp[0].eql?"file") 
+			# file;seed;algorithm;offset;startTime;endTime;fitness;evaluations;points;solution
+			sol = Solution.new(tmp[3].to_f, tmp[8].to_f, tmp[9]);
+			solutions.push(sol);
+		end
 	end
 
 	# sort the solutions by offset (ASC)

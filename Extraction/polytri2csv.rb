@@ -48,10 +48,10 @@ def polyTri(params, t, omega)
 	end	
 
 	for i in (3+n)..(params.length-1)
-		note += params[i] * Math.cos(deg2Rad((i-3-n)*omega*t));
+		note += params[i] * Math.cos(deg2Rad((i-3-n+1)*omega*t));
 	end
 			
-	return note.round;
+	return note.floor;
 end
 
 def convert(in_file, duration, omega)
@@ -61,8 +61,10 @@ def convert(in_file, duration, omega)
 	f.each_line do |line|
 		tmp = line.split(";");
 		# file;seed;algorithm;offset;startTime;endTime;fitness;evaluations;points;solution
-		sol = Solution.new(tmp[3].to_f, tmp[8].to_f, tmp[9]);
-		solutions.push(sol);
+		if(!tmp[0].eql?"file") 
+			sol = Solution.new(tmp[3].to_f, tmp[8].to_f, tmp[9]);
+			solutions.push(sol);
+		end
 	end
 
 	# sort the solutions by offset (ASC)
