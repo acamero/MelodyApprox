@@ -42,7 +42,6 @@ for i=1:length(temp3),
 
 endfor
 
-
-fit = [fitness0 fitness1 fitness2 fitness3 fitness4 fitness5 phrases]
+fit = [fitness0 fitness1 fitness2 fitness3 fitness4 fitness5 phrases length(melody)]
 
 endfunction

@@ -39,9 +39,13 @@ pp4 = splinefit(t, pitch, frames,"order",4);
 y4 = floor(ppval(pp4,t));
 fitness4 = sum(power(pitch-y4,2));
 
+pp5 = splinefit(t, pitch, frames,"order",5);
+y5 = floor(ppval(pp5,t));
+fitness5 = sum(power(pitch-y5,2));
+
 % tp=1:length(t)*0.1;
 % plot( t(tp),pitch(tp), ".", t(tp), y4(tp));
 
-fit = [fitness0 fitness1 fitness2 fitness3 fitness4 frames]
+fit = [fitness0 fitness1 fitness2 fitness3 fitness4 fitness5 frames length(melody)]
 
 endfunction

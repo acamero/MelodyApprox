@@ -23,6 +23,7 @@ fitness1 = 0;
 fitness2 = 0;
 fitness3 = 0;
 fitness4 = 0;
+fitness5 = 0;
 phrases = 0;
 
 j = 1;
@@ -52,6 +53,10 @@ for i=1:length(temp3),
     y4 = floor(polyval(pp4,t));
     fitness4 += sum(power(pitch-y4,2));
     
+    pp5 = polyfit(t, pitch, 5);
+    y5 = floor(polyval(pp5,t));
+    fitness5 += sum(power(pitch-y5,2));
+    
     j = i+1;   
     phrases++;
    endif
@@ -59,6 +64,6 @@ for i=1:length(temp3),
 endfor
 
 
-fit = [fitness0 fitness1 fitness2 fitness3 fitness4 phrases]
+fit = [fitness0 fitness1 fitness2 fitness3 fitness4 fitness5 phrases length(melody)]
 
 endfunction

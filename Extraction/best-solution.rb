@@ -83,6 +83,7 @@ if __FILE__ == $0
 			Dir.mkdir(options.out_dir) unless File.exists?(options.out_dir)
 			outDir = File.absolute_path(options.out_dir);
 			outFile = outDir+"/"+options.in_file.sub("detail.csv","best.csv");
+			puts outFile;
 			getBestSolution(options.in_file,outFile);
 		end
 	else
